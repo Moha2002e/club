@@ -1,0 +1,1251 @@
+/* Styles personnalisés pour le dashboard */
+
+/* Empêcher les icônes de rétrécir dans la sidebar */
+.nav-item i,
+.nav-item svg {
+    min-width: 1.25rem !important;
+    min-height: 1.25rem !important;
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+}
+
+#sidebar img {
+    min-width: 2.5rem !important;
+    min-height: 2.5rem !important;
+}
+
+/* Styles pour les onglets */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Navigation active */
+.nav-item.active {
+    background-color: #3B82F6 !important;
+    color: white !important;
+}
+
+.nav-item.active i {
+    color: white !important;
+}
+
+/* Styles pour les notifications */
+.notification {
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Styles pour les barres de progression */
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+
+/* Styles pour les avatars des membres */
+.member-avatar {
+    transition: transform 0.2s ease;
+}
+
+.member-avatar:hover {
+    transform: scale(1.1);
+}
+
+/* Styles pour les boutons d'action */
+.action-button {
+    transition: all 0.2s ease;
+}
+
+.action-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Styles pour les événements */
+.event-card {
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Amélioration des tooltips */
+[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+/* Animation pour les lignes du tableau */
+tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+
+/* Styles pour les badges de statut avec animation */
+.status-badge {
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.status-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Animation pour le bouton "Nouveau projet" */
+.new-project-btn {
+    transition: all 0.3s ease;
+}
+
+.new-project-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}luides pour tous les éléments */
+* {
+    transition: all 0.3s ease;
+}
+
+/* Effet de survol pour les cartes */
+.bg-white:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Animations pour la sidebar */
+#sidebar {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Effet de survol pour les éléments de navigation */
+.nav-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.nav-item:hover::before {
+    left: 100%;
+}
+
+/* Animation pour les icônes */
+.nav-item i {
+    transition: transform 0.3s ease;
+}
+
+.nav-item:hover i {
+    transform: scale(1.1);
+}
+
+/* Styles pour les badges de notification */
+.notification-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Effet de focus pour les inputs */
+input:focus {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Animation pour les statistiques */
+.stat-card {
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+}
+
+
+
+
+
+/* Styles pour les badges de rôle */
+.role-badge {
+    transition: all 0.2s ease;
+}
+
+.role-admin {
+    background-color: #e9d5ff;
+    color: #6b21a8;
+}
+
+.role-student {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+
+.status-active {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-inactive {
+    background-color: #fecaca;
+    color: #dc2626;
+}
+
+/* Adaptation pour le mode sombre */
+.theme-dark .role-admin {
+    background-color: #4c1d95;
+    color: #c4b5fd;
+}
+
+.theme-dark .role-student {
+    background-color: #1e3a8a;
+    color: #93c5fd;
+}
+
+.theme-dark .status-active {
+    background-color: #14532d;
+    color: #86efac;
+}
+
+.theme-dark .status-inactive {
+    background-color: #7f1d1d;
+    color: #fca5a5;
+}
+
+/* Styles pour les badges de type d'événement */
+.event-type-badge {
+    transition: all 0.2s ease;
+}
+
+.event-type-meeting {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.event-type-deadline {
+    background-color: #fecaca;
+    color: #dc2626;
+}
+
+.event-type-milestone {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.event-type-presentation {
+    background-color: #e9d5ff;
+    color: #6b21a8;
+}
+
+.event-type-training {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.event-type-social {
+    background-color: #fce7f3;
+    color: #be185d;
+}
+
+.event-type-general {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+/* Styles pour les badges de visibilité */
+.visibility-badge {
+    transition: all 0.2s ease;
+}
+
+.visibility-public {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.visibility-private {
+    background-color: #fed7aa;
+    color: #ea580c;
+}
+
+/* Adaptation pour le mode sombre - Types d'événements */
+.theme-dark .event-type-meeting {
+    background-color: #1e3a8a;
+    color: #93c5fd;
+}
+
+.theme-dark .event-type-deadline {
+    background-color: #7f1d1d;
+    color: #fca5a5;
+}
+
+.theme-dark .event-type-milestone {
+    background-color: #14532d;
+    color: #86efac;
+}
+
+.theme-dark .event-type-presentation {
+    background-color: #4c1d95;
+    color: #c4b5fd;
+}
+
+.theme-dark .event-type-training {
+    background-color: #92400e;
+    color: #fcd34d;
+}
+
+.theme-dark .event-type-social {
+    background-color: #831843;
+    color: #f9a8d4;
+}
+
+.theme-dark .event-type-general {
+    background-color: #374151;
+    color: #d1d5db;
+}
+
+/* Adaptation pour le mode sombre - Visibilité */
+.theme-dark .visibility-public {
+    background-color: #14532d;
+    color: #86efac;
+}
+
+.theme-dark .visibility-private {
+    background-color: #9a3412;
+    color: #fdba74;
+}
+
+/* Styles pour les cartes d'événements du dashboard */
+.event-card-bg {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.event-card-border {
+    border-color: #bfdbfe;
+}
+
+.event-icon-bg {
+    background-color: #dbeafe;
+}
+
+.event-icon-color {
+    color: #2563eb;
+}
+
+/* Adaptation pour le mode sombre - Cartes d'événements */
+.theme-dark .event-card-bg {
+    background-color: rgba(30, 58, 138, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.theme-dark .event-card-border {
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.theme-dark .event-icon-bg {
+    background-color: #1e3a8a;
+}
+
+.theme-dark .event-icon-color {
+    color: #60a5fa;
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Styles pour le mode responsive */
+@media (max-width: 1024px) {
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    #sidebar:not(.-translate-x-full) {
+        transform: translateX(0);
+    }
+    
+    main {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* Overlay pour mobile */
+#sidebar-overlay {
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Animation pour le bouton menu mobile */
+#mobile-menu-button {
+    transition: transform 0.2s ease;
+}
+
+#mobile-menu-button:active {
+    transform: scale(0.95);
+}
+
+/* Amélioration de l'accessibilité pour les boutons */
+button:focus {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
+}
+
+/* Styles pour les transitions de la sidebar */
+#sidebar {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Empêcher le scroll horizontal sur mobile */
+@media (max-width: 1024px) {
+    body {
+        overflow-x: hidden;
+    }
+}
+
+/* Effet de chargement pour les cartes */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-animation {
+    animation: slideInUp 0.6s ease-out;
+}
+
+/* Styles pour les graphiques placeholder */
+.chart-placeholder {
+    background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
+    background-size: 20px 20px;
+    background-image: 
+        linear-gradient(45deg, transparent 35%, rgba(255,255,255,.5) 35%, rgba(255,255,255,.5) 65%, transparent 65%),
+        linear-gradient(-45deg, transparent 35%, rgba(0,0,0,.1) 35%, rgba(0,0,0,.1) 65%, transparent 65%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+/* Effet de survol pour les boutons */
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Styles pour les tooltips */
+.tooltip {
+    position: relative;
+}
+
+.tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1f2937;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0;
+    animation: tooltipFadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Thèmes dynamiques - Clair et Sombre uniquement */
+.theme-light { 
+    --bg-primary: #ffffff; 
+    --bg-secondary: #f8fafc; 
+    --text-primary: #1f2937; 
+    --text-secondary: #6b7280; 
+    --border-color: #e5e7eb;
+}
+
+.theme-dark { 
+    --bg-primary: #1f2937; 
+    --bg-secondary: #111827; 
+    --text-primary: #f9fafb; 
+    --text-secondary: #d1d5db; 
+    --border-color: #374151;
+}
+
+/* Classes personnalisées pour les thèmes */
+.bg-primary {
+    background-color: var(--bg-primary) !important;
+}
+
+.bg-secondary {
+    background-color: var(--bg-secondary) !important;
+}
+
+.text-primary {
+    color: var(--text-primary) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.border-color {
+    border-color: var(--border-color) !important;
+}
+
+/* Application des thèmes - Plus spécifique */
+.theme-light,
+.theme-light body,
+.theme-light html {
+    background-color: #f8fafc !important;
+    color: #1f2937 !important;
+}
+
+.theme-dark,
+.theme-dark body,
+.theme-dark html {
+    background-color: #111827 !important;
+    color: #f9fafb !important;
+}
+
+.theme-dark .bg-white,
+.theme-dark .bg-gray-50 {
+    background-color: #1f2937 !important;
+}
+
+.theme-dark .text-gray-800,
+.theme-dark .text-gray-900 {
+    color: #f9fafb !important;
+}
+
+.theme-dark .text-gray-600,
+.theme-dark .text-gray-700 {
+    color: #d1d5db !important;
+}
+
+.theme-dark .border-gray-200,
+.theme-dark .border-gray-300 {
+    border-color: #374151 !important;
+}
+
+.theme-dark .bg-gray-100 {
+    background-color: #374151 !important;
+}
+
+.theme-dark .hover\:bg-gray-50:hover {
+    background-color: #374151 !important;
+}
+
+.theme-dark .hover\:bg-gray-100:hover {
+    background-color: #4b5563 !important;
+}
+
+/* Sidebar spécifique */
+.theme-dark #sidebar {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+.theme-dark .nav-item {
+    color: #d1d5db !important;
+}
+
+.theme-dark .nav-item:hover {
+    background-color: #374151 !important;
+}
+
+/* Header spécifique */
+.theme-dark header {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Cartes spécifiques */
+.theme-dark .bg-white {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Inputs spécifiques */
+.theme-dark input,
+.theme-dark textarea,
+.theme-dark select {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f9fafb !important;
+}
+
+.theme-dark input::placeholder,
+.theme-dark textarea::placeholder {
+    color: #9ca3af !important;
+}
+
+/* Cartes et sections spécifiques */
+.theme-dark .bg-white {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+.theme-dark .shadow-sm {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+.theme-dark .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Navigation spécifique */
+.theme-dark .nav-item {
+    color: #d1d5db !important;
+}
+
+.theme-dark .nav-item:hover {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+}
+
+.theme-dark .nav-item.active {
+    background-color: #3a1fd3 !important;
+    color: white !important;
+}
+
+/* Header spécifique */
+.theme-dark header {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Boutons spécifiques */
+.theme-dark button {
+    color: #f9fafb !important;
+}
+
+.theme-dark .bg-blue-600 {
+    background-color: #eb2525 !important;
+}
+
+.theme-dark .bg-blue-600:hover {
+    background-color: #d81d1d !important;
+}
+
+/* Styles pour les scrollbars personnalisées */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Animation pour les indicateurs de chargement */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Badges pour les priorités des tâches */
+.badge-priority {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 9999px;
+    white-space: nowrap;
+}
+
+.badge-low {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.badge-medium {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.badge-high {
+    background-color: #fed7aa;
+    color: #ea580c;
+}
+
+.badge-urgent {
+    background-color: #fee2e2;
+    color: #dc2626;
+    animation: pulse 2s infinite;
+}
+
+/* Badges pour les statuts des projets */
+.badge-status {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.badge-planning {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.badge-active {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.badge-completed {
+    background-color: #e5e7eb;
+    color: #4b5563;
+}
+
+.badge-on_hold {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.badge-cancelled {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+/* Utilitaire pour limiter le texte sur 2 lignes */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Styles pour les cartes de tâches */
+.task-card {
+    transition: all 0.2s ease;
+}
+
+.task-card:hover {
+    border-color: #3B82F6 !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+/* Styles pour les cartes de projets */
+.project-card {
+    transition: all 0.2s ease;
+}
+
+.project-card:hover {
+    border-color: #10B981 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* Amélioration des messages vides */
+.empty-state {
+    color: #9ca3af;
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+/* Animation pour le bouton "Nouvelle tâche" */
+.btn-new-task {
+    transition: all 0.2s ease;
+}
+
+.btn-new-task:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* ===== MESSAGE BANNER STYLES ===== */
+
+/* Container principal du message */
+.message-banner {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.message-container {
+    position: relative;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 60px;
+    overflow: hidden;
+    mask: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+    -webkit-mask: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.message-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Effet de traînée restauré */
+.scrolling-message::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -20px;
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+    animation: trail-effect 12s linear infinite;
+}
+
+@keyframes trail-effect {
+    0% {
+        left: -20px;
+        opacity: 0;
+    }
+    5% {
+        left: -20px;
+        opacity: 1;
+    }
+    95% {
+        left: calc(100% + 20px);
+        opacity: 1;
+    }
+    100% {
+        left: calc(100% + 20px);
+        opacity: 0;
+    }
+}
+
+.message-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    animation: pulse-icon 2s ease-in-out infinite;
+}
+
+/* Animation de défilement restaurée */
+.scrolling-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: scroll-smooth 12s linear infinite;
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+}
+
+.message-title {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.message-separator {
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.message-text {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+}
+
+/* Décorations avec étincelles */
+.message-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffffff;
+    border-radius: 50%;
+    animation: sparkle-float 3s ease-in-out infinite;
+}
+
+.sparkle-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.sparkle-2 {
+    top: 60%;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+.sparkle-3 {
+    top: 40%;
+    left: 80%;
+    animation-delay: 2s;
+}
+
+/* ===== THÈME CLAIR ===== */
+.theme-light .message-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.theme-light .message-icon {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    color: #667eea;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .message-title {
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-light .message-separator {
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-light .message-text {
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-light .sparkle {
+    background: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* Traînée blanche pour le thème clair */
+.theme-light .scrolling-message::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2));
+}
+
+/* ===== THÈME SOMBRE ===== */
+.theme-dark .message-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(59, 130, 246, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-dark .message-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    animation: shimmer-dark 3s ease-in-out infinite;
+}
+
+.theme-dark .message-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4), 0 0 20px rgba(59, 130, 246, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-dark .message-title {
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(59, 130, 246, 0.5);
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.theme-dark .message-separator {
+    color: #3b82f6;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(59, 130, 246, 0.8);
+    font-weight: 900;
+    font-size: 24px;
+    animation: glow-separator 2s ease-in-out infinite alternate;
+}
+
+.theme-dark .message-text {
+    color: #e2e8f0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 10px rgba(59, 130, 246, 0.3);
+    font-weight: 600;
+}
+
+.theme-dark .sparkle {
+    background: #3b82f6;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 1), 0 0 30px rgba(59, 130, 246, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Traînée bleue pour le thème sombre */
+.theme-dark .scrolling-message::after {
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3));
+}
+
+/* ===== ANIMATIONS ===== */
+
+/* Animation de défilement comme dans une gare */
+@keyframes scroll-smooth {
+    0% {
+        transform: translateX(100vw);
+        opacity: 1;
+    }
+    5% {
+        transform: translateX(90vw);
+        opacity: 1;
+    }
+    95% {
+        transform: translateX(-90vw);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100vw);
+        opacity: 0;
+    }
+}
+
+/* Animation de pulsation pour l'icône */
+@keyframes pulse-icon {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* Animation des étincelles */
+@keyframes sparkle-float {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(0) scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1);
+    }
+}
+
+/* Animation d'entrée pour le banner */
+.message-banner {
+    animation: slide-in-down 0.8s ease-out;
+}
+
+@keyframes slide-in-down {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+@keyframes breathe-dark {
+    0%, 100% {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+    50% {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(59, 130, 246, 0.4);
+    }
+}
+
+/* Animation shimmer pour le thème sombre */
+@keyframes shimmer-dark {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Animation de lueur pour le séparateur */
+@keyframes glow-separator {
+    0% {
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(59, 130, 246, 0.8);
+    }
+    100% {
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 25px rgba(59, 130, 246, 1), 0 0 35px rgba(59, 130, 246, 0.6);
+    }
+}
+
+/* Animation de respiration supprimée pour éviter les sauts */
+.theme-light .message-banner {
+    /* animation: breathe-light 4s ease-in-out infinite; - Supprimée */
+}
+
+@keyframes breathe-light {
+    0%, 100% {
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5);
+    }
+}
+
+/* Styles spécifiques pour les cartes d'événements en thème sombre */
+.theme-dark .bg-blue-50 {
+    background-color: #1e3a8a !important;
+    border-color: #1e40af !important;
+}
+
+.theme-dark .bg-blue-100 {
+    background-color: #1e40af !important;
+}
+
+.theme-dark .text-blue-600 {
+    color: #60a5fa !important;
+}
+
+.theme-dark .border-blue-200 {
+    border-color: #1e40af !important;
+}
+
+/* Styles spécifiques pour les messages du dashboard en thème sombre */
+.theme-dark .bg-green-50 {
+    background-color: #064e3b !important;
+    border-color: #065f46 !important;
+}
+
+.theme-dark .bg-yellow-100 {
+    background-color: #78350f !important;
+}
+
+.theme-dark .bg-green-100 {
+    background-color: #064e3b !important;
+}
+
+.theme-dark .bg-red-100 {
+    background-color: #7f1d1d !important;
+}
+
+.theme-dark .text-yellow-800 {
+    color: #fbbf24 !important;
+}
+
+.theme-dark .text-green-800 {
+    color: #10b981 !important;
+}
+
+.theme-dark .text-red-800 {
+    color: #f87171 !important;
+}
+
+.theme-dark .border-green-200 {
+    border-color: #065f46 !important;
+}

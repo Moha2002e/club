@@ -3,7 +3,7 @@
 
 -- Remarque : La base de données 'club_database' doit déjà exister sur AlwaysData
 -- Ce script créera seulement les tables
-
+create database if not exists club_database;
 -- Utiliser la base de données
 USE club_database;
 
@@ -13,6 +13,8 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS task_assignments;
 DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS project_members;
+DROP TABLE IF EXISTS event_participants;
+DROP TABLE IF EXISTS dashboard_messages;
 
 -- Tables indépendantes ou moins référencées
 DROP TABLE IF EXISTS events;
@@ -30,12 +32,17 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     role ENUM('student', 'admin') DEFAULT 'student',
+    theme_preference ENUM('light', 'dark', 'blue', 'green') DEFAULT 'light',
+    activation_token VARCHAR(255) NULL,
+    otp_expires_at TIMESTAMP NULL,
+    is_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
     INDEX idx_username (username),
     INDEX idx_email (email),
-    INDEX idx_role (role)
+    INDEX idx_role (role),
+    INDEX idx_activation_token (activation_token)
 );
 
 -- Table des paramètres généraux du dashboard (clé/valeur)
@@ -43,6 +50,20 @@ CREATE TABLE IF NOT EXISTS settings (
     `key` VARCHAR(100) PRIMARY KEY,
     `value` TEXT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Table pour les messages du dashboard (admin uniquement)
+CREATE TABLE IF NOT EXISTS dashboard_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    message TEXT NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_active (is_active),
+    INDEX idx_created_at (created_at)
 );
 
 -- Table pour les projets (future extension)
@@ -55,6 +76,7 @@ CREATE TABLE IF NOT EXISTS projects (
     visibility ENUM('private', 'public') DEFAULT 'private',
     start_date DATE NULL,
     due_date DATE NULL,
+    pdf_file VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -82,19 +104,16 @@ CREATE TABLE IF NOT EXISTS tasks (
     description TEXT,
     status ENUM('pending', 'in_progress', 'completed', 'cancelled') DEFAULT 'pending',
     priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium',
-    assigned_to INT,
     created_by INT NOT NULL,
     project_id INT NOT NULL,
     due_date DATETIME,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     completed_at TIMESTAMP NULL,
-    FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
     INDEX idx_status (status),
     INDEX idx_priority (priority),
-    INDEX idx_assigned_to (assigned_to),
     INDEX idx_created_by (created_by),
     INDEX idx_due_date (due_date),
     INDEX idx_project_id (project_id)
@@ -119,15 +138,33 @@ CREATE TABLE IF NOT EXISTS events (
     title VARCHAR(200) NOT NULL,
     description TEXT,
     location VARCHAR(200),
-    start_date DATE NOT NULL,
-    end_date DATE NULL,
-    visibility ENUM('public','private') DEFAULT 'public',
+    start_date DATETIME NOT NULL,
+    end_date DATETIME NULL,
+    event_type ENUM('meeting', 'deadline', 'milestone', 'presentation', 'training', 'social', 'other') DEFAULT 'meeting',
+    project_id INT NULL,
+    target_type ENUM('all', 'specific') DEFAULT 'all',
     created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL,
     INDEX idx_start (start_date),
-    INDEX idx_visibility (visibility)
+    INDEX idx_target_type (target_type),
+    INDEX idx_event_type (event_type),
+    INDEX idx_project (project_id)
+);
+
+-- Table pour les participants/destinataires des événements
+CREATE TABLE IF NOT EXISTS event_participants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    user_id INT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_event_user (event_id, user_id),
+    INDEX idx_event_id (event_id),
+    INDEX idx_user_id (user_id)
 );
 
 -- Table des annonces

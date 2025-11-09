@@ -169,15 +169,15 @@
     }
 
     // Build mailto link for fallback
-    function buildMailto(name, email, subject, message, phone){
+    function buildMailto(name, email, subject, message, section){
         const bodyLines = [];
         if(name) bodyLines.push('Nom: ' + name);
         if(email) bodyLines.push('Email: ' + email);
-        if(phone) bodyLines.push('Téléphone: ' + phone);
+        if(section) bodyLines.push('Section: ' + section);
         bodyLines.push('');
         bodyLines.push(message || '');
         const body = encodeURIComponent(bodyLines.join('\n'));
-        return `mailto:mohammed.elaouali@student.hepl.be?subject=${encodeURIComponent(subject)}&body=${body}`;
+        return `mailto:jerome.focant@student.hepl.be?subject=${encodeURIComponent(subject)}&body=${body}`;
     }
 
     // Send via EmailJS REST API (fallback when SDK unavailable)
@@ -221,8 +221,8 @@
         const email = document.getElementById('contact-email').value.trim();
         const subject = document.getElementById('contact-subject').value.trim() || 'Message depuis le site HEPL Tech Lab';
         const message = document.getElementById('contact-message').value.trim();
-        const phoneEl = document.getElementById('contact-phone');
-        const phone = phoneEl ? phoneEl.value.trim() : '';
+        const sectionEl = document.getElementById('contact-section');
+        const section = sectionEl ? sectionEl.value.trim() : '';
 
         // Prepare template parameters
         const templateParams = {
@@ -231,7 +231,7 @@
             time: new Date().toLocaleString(),
             title: subject,
             email: email || '',
-            phone: phone || ''
+            section: section || ''
         };
 
         // Try to send email
@@ -255,7 +255,7 @@
                             })
                             .catch(function(err){
                                 console.error('EmailJS REST fallback error:', err);
-                                const mailtoLink = buildMailto(name, email, subject, message, phone);
+                                const mailtoLink = buildMailto(name, email, subject, message, section);
                                 showToast('L\'envoi a échoué. Utilisez votre client mail.', 'error', mailtoLink);
                                 updateStatus('L\'envoi a échoué. Voir la console pour détails.', true);
                             });
@@ -270,7 +270,7 @@
                     })
                     .catch(function(err){
                         console.error('EmailJS REST send error:', err);
-                        const mailtoLink = buildMailto(name, email, subject, message, phone);
+                        const mailtoLink = buildMailto(name, email, subject, message, section);
                         showToast('Impossible d\'envoyer via le service. Utilisez votre client mail.', 'error', mailtoLink);
                         updateStatus('L\'envoi a échoué. Voir la console pour détails.', true);
                     });

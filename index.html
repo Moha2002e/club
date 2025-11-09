@@ -4,616 +4,1293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="HEPL Tech Lab - Club d'informatique innovant. Développement d'applications, IA, cybersécurité et réseaux. Rejoignez notre communauté passionnée !">
-    <meta name="keywords"
-        content="HEPL, Tech Lab, informatique, développement, IA, cybersécurité, réseaux, club étudiant">
-    <meta name="author" content="HEPL Tech Lab">
-    <meta name="robots" content="index, follow">
+    <title>Tech Lab - Club Développement & Sécurité</title>
 
-    <!-- Optimisation de performance -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
 
-    <!-- Meta pour réseaux sociaux -->
-    <meta property="og:title" content="HEPL Tech Lab - Innovation & Créativité">
-    <meta property="og:description" content="Club d'informatique innovant. Développement, IA, cybersécurité et plus !">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://hepltechlab.be">
-    <meta name="twitter:card" content="summary_large_image">
-
-    <title>HEPL Tech Lab - Innovation & Créativité</title>
-
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/tailwind.css">
-    <link rel="stylesheet" href="css/main.css">
-
-    <!-- Critical CSS inline -->
-    <style>
-        /* Critical path CSS - chargement immédiat */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #f9fafb;
-        }
-
-        .hero-loading {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Enable smooth scrolling for browsers that support it */
-        html {
-            scroll-behavior: smooth;
-        }
-    </style>
-
-    <script>
-        // Préchargement des ressources critiques
-        const preloadResources = [
-            { href: 'css/main.css', as: 'style' },
-            { href: 'js/script.js', as: 'script' }
-        ];
-
-        preloadResources.forEach(resource => {
-            const link = document.createElement('link');
-            link.rel = 'preload';
-            link.href = resource.href;
-            link.as = resource.as;
-            document.head.appendChild(link);
-        });
-    </script>
-    <link href="css/tailwind.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"
-        media="print" onload="this.media='all'">
-    <noscript>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    </noscript>
-    <script>
-        // Force-hide nav on small screens early (inline) to prevent visual overlap on mobile
-        (function () {
-            function hideNavIfMobile() {
-                try {
-                    const nav = document.querySelector('nav');
-                    if (!nav) return;
-                    if (window.innerWidth <= 768) {
-                        nav.style.setProperty('display', 'none', 'important');
-                        nav.style.setProperty('transform', 'translateY(-120%)', 'important');
-                        nav.style.setProperty('opacity', '0', 'important');
-                        nav.style.setProperty('pointer-events', 'none', 'important');
-                        nav.style.setProperty('height', '0', 'important');
-                        nav.style.setProperty('overflow', 'hidden', 'important');
-                    } else {
-                        // restore default for larger screens
-                        nav.style.removeProperty('display');
-                        nav.style.removeProperty('transform');
-                        nav.style.removeProperty('opacity');
-                        nav.style.removeProperty('pointer-events');
-                        nav.style.removeProperty('height');
-                        nav.style.removeProperty('overflow');
-                    }
-                } catch (e) {/* ignore */ }
-            }
-            hideNavIfMobile();
-            window.addEventListener('resize', hideNavIfMobile);
-            // also try shortly after load in case nav is added later
-            window.addEventListener('load', hideNavIfMobile);
-        })();
-    </script>
-        <!-- EmailJS SDK (client-side email sending) -->
-        <script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body class="bg-gray-50">
-    <!-- Loader de performance -->
-    <div id="performance-loader" class="hero-loading">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <!-- Contenu principal caché pendant le chargement -->
-    <div id="main-content" style="display: none;">
-
-        <!-- Navigation -->
-        <nav class="glass-effect fixed w-full z-50 transition-all duration-300">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="flex justify-between items-center py-4">
-                    <div class="flex items-center space-x-2 slide-in-left">
-                        <i class="fas fa-code text-3xl text-blue-600 glow-effect"></i>
-                        <span class="text-2xl font-bold text-blue-600">HEPL Tech Lab</span>
+<body class="bg-neutral-900 text-white transition-colors duration-300">
+    <!-- Navigation -->
+    <nav
+        class="fixed top-0 w-full bg-neutral-900/80 backdrop-blur-xl border-b border-neutral-800 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center">
+                        <img src="images/logo.png" alt="Tech Lab Logo" class="h-10 w-auto" />
                     </div>
-                    <div class="hidden md:flex space-x-8">
-                        <a href="#accueil"
-                            class="text-gray-700 hover:text-blue-600 transition duration-300 hover-lift">Accueil</a>
-                        <a href="#activites"
-                            class="text-gray-700 hover:text-blue-600 transition duration-300 hover-lift">Activités</a>
-                        <a href="#projets"
-                            class="text-gray-700 hover:text-blue-600 transition duration-300 hover-lift">Projets</a>
-                        <a href="#equipe"
-                            class="text-gray-700 hover:text-blue-600 transition duration-300 hover-lift">Équipe</a>
-                        <a href="#contact"
-                            class="text-gray-700 hover:text-blue-600 transition duration-300 hover-lift">Contact</a>
-                    </div>
-                    <a href="https://discord.gg/9Qc56d7b" target="_blank"
-                        class="modern-gradient text-white px-6 py-2 rounded-full hover:scale-105 transition duration-300 pulse-hover button-3d inline-flex items-center">
-                        <i class="fab fa-discord mr-2"></i>
-                        Nous rejoindre
-                    </a>
+                    <span class="text-xl font-semibold tracking-tight">Tech Lab</span>
                 </div>
-            </div>
-        </nav>
-
-        <!-- Hero Section -->
-        <section id="accueil"
-            class="gradient-bg min-h-screen flex items-center relative overflow-hidden interactive-bg">
-            <div class="absolute inset-0 bg-black opacity-30"></div>
-            <div class="max-w-7xl mx-auto px-4 relative z-10">
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <div class="text-white fade-in-up">
-                        <h1 class="text-5xl md:text-7xl font-bold mb-6">
-                            Bienvenue au
-                            <span class="text-yellow-300 font-extrabold">HEPL Tech Lab</span>
-                        </h1>
-                        <p class="text-xl mb-8 leading-relaxed slide-in-left">
-                            Rejoignez notre communauté passionnée d'étudiants innovateurs.
-                            Créez des applications, développez vos compétences en IA et explorez les dernières
-                            technologies.
-                        </p>
-                        <div class="flex flex-col sm:flex-row gap-4 slide-in-right">
-                            <a href="https://discord.gg/9Qc56d7b" target="_blank"
-                                class="modern-gradient text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition duration-300 pulse-hover button-3d glow-effect inline-flex items-center">
-                                <i class="fab fa-discord mr-2"></i>
-                                Commencer l'aventure
-                            </a>
-                            <a href="#projets"
-                                class="glass-effect border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-gray-800 transition duration-300 hover-lift inline-flex items-center">
-                                <i class="fas fa-play mr-2"></i>
-                                Voir nos projets
-                            </a>
-                        </div>
-                    </div>
-                    <div class="float gpu-accelerated">
-                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                            alt="Étudiants travaillant sur des projets informatiques"
-                            class="hero-image rounded-lg shadow-2xl morphing-card hover-lift will-change-transform"
-                            loading="eager" decoding="async" width="600" height="450">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Floating elements -->
-            <div class="absolute top-20 left-10 text-white opacity-30">
-                <i class="fas fa-code text-6xl float neon-text"></i>
-            </div>
-            <div class="absolute bottom-20 right-10 text-white opacity-30">
-                <i class="fas fa-laptop-code text-6xl float neon-text" style="animation-delay: 1s;"></i>
-            </div>
-            <div class="absolute top-1/2 right-20 text-white opacity-20">
-                <i class="fas fa-brain text-4xl float" style="animation-delay: 2s;"></i>
-            </div>
-            <div class="absolute bottom-1/3 left-20 text-white opacity-20">
-                <i class="fas fa-shield-alt text-5xl float" style="animation-delay: 1.5s;"></i>
-            </div>
-        </section>
-
-        <!-- Statistics Section -->
-        <section class="py-16 modern-gradient relative">
-            <div class="absolute inset-0 bg-white opacity-90"></div>
-            <div class="max-w-7xl mx-auto px-4 relative z-10">
-                <div class="grid md:grid-cols-4 gap-8 text-center">
-                    <div class="morphing-card card-hover p-8 hover-lift will-change-transform">
-                        <div class="text-5xl font-bold text-blue-600 mb-4 neon-text" id="members-count">0</div>
-                        <div class="skill-bar mb-2"></div>
-                        <p class="text-gray-600 font-medium">Membres actifs</p>
-                    </div>
-                    <div class="morphing-card card-hover p-8 hover-lift will-change-transform">
-                        <div class="text-5xl font-bold text-green-600 mb-4 neon-text" id="projects-count">0</div>
-                        <div class="skill-bar mb-2"></div>
-                        <p class="text-gray-600 font-medium">Projets réalisés</p>
-                    </div>
-                    <div class="morphing-card card-hover p-8 hover-lift will-change-transform">
-                        <div class="text-5xl font-bold text-purple-600 mb-4 neon-text" id="events-count">0</div>
-                        <div class="skill-bar mb-2"></div>
-                        <p class="text-gray-600 font-medium">Événements organisés</p>
-                    </div>
-                    <div class="morphing-card card-hover p-8 hover-lift will-change-transform">
-                        <div class="text-5xl font-bold text-red-600 mb-4 neon-text" id="awards-count">0</div>
-                        <div class="skill-bar mb-2"></div>
-                        <p class="text-gray-600 font-medium">Récompenses obtenues</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Activities Section -->
-        <section id="activites" class="py-20 bg-gray-100">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Nos Activités</h2>
-                    <p class="text-xl text-gray-600">Découvrez toutes les activités passionnantes que nous proposons</p>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
-                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                            alt="Développement d'applications" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-mobile-alt text-2xl text-blue-600 mr-3"></i>
-                                <h3 class="text-xl font-bold">Développement d'Applications</h3>
-                            </div>
-                            <p class="text-gray-600 mb-4">
-                                Créez des applications mobiles et web innovantes avec les dernières technologies.
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">React</span>
-                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Node.js</span>
-                                <span
-                                    class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Flutter</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
-                        <img src="https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                            alt="Secteur industriel et automatisation" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-industry text-2xl text-purple-600 mr-3"></i>
-                                <h3 class="text-xl font-bold">Industriel</h3>
-                            </div>
-                            <p class="text-gray-600 mb-4">
-                                Projets industriels : automatisation, IoT industriel et contrôle-commande.
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">IoT</span>
-                                <span
-                                    class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Automatisation</span>
-                                <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">PLC</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
-                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                            alt="Réseaux et Cybersécurité" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-shield-alt text-2xl text-green-600 mr-3"></i>
-                                <h3 class="text-xl font-bold">Réseaux & Cybersécurité</h3>
-                            </div>
-                            <p class="text-gray-600 mb-4">
-                                Maîtrisez la sécurité informatique et l'administration des réseaux.
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">Linux</span>
-                                <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Ethical
-                                    Hacking</span>
-                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Cisco</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section id="projets" class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Projets en cours</h2>
-                    <p class="text-xl text-gray-600">Projets en cours — rejoignez-nous pour participer à leur
-                        réalisation !</p>
-                </div>
-
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg p-6 text-white card-hover">
-                        <i class="fas fa-tachometer-alt text-3xl mb-4"></i>
-                        <h3 class="text-xl font-bold mb-2">Dashboard de Suivi</h3>
-                        <p class="mb-4">Création d'un dashboard pour suivre l'avancement des projets, visualisation des
-                            tâches et KPI.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm opacity-75">React • Node.js • Firebase</span>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-to-br from-green-500 to-teal-600 rounded-lg p-6 text-white card-hover">
-                        <i class="fas fa-seedling text-3xl mb-4"></i>
-                        <h3 class="text-xl font-bold mb-2">prorSys.aros</h3>
-                        <p class="mb-4">Système d'arrosage automatisé (IoT) pour jardins et espaces verts. Capteurs,
-                            contrôle et planification.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm opacity-75">Arduino • IoT • Sensors</span>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-to-br from-red-500 to-pink-600 rounded-lg p-6 text-white card-hover">
-                        <i class="fas fa-shield-alt text-3xl mb-4"></i>
-                        <h3 class="text-xl font-bold mb-2">Error404 (Équipe CTF)</h3>
-                        <p class="mb-4">Équipe CTF dédiée aux compétitions de cybersécurité : challenges, entraînements
-                            et compétitions.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm opacity-75">Security • CTF • Linux</span>
-                        </div>
-                    </div>
-
-                    <!-- Removed old project entries to keep only current projects -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Team Section -->
-        <section id="equipe" class="py-20 bg-gray-100">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Notre Équipe</h2>
-                    <p class="text-xl text-gray-600">Rencontrez les passionnés qui dirigent le club</p>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
-                        <div
-                            class="w-full h-64 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                            <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                <i class="fas fa-user-tie text-6xl text-blue-600"></i>
-                            </div>
-                        </div>
-                        <div class="p-6 text-center">
-                            <h3 class="text-xl font-bold mb-2">Jérôme Focant</h3>
-                            <p class="text-blue-600 mb-3">Étudiant · Réseaux &amp; Télécommunications (Bloc 3)</p>
-                            <p class="text-gray-600 text-sm mb-4">Étudiant en Réseaux et Télécommunications (Bloc 3) à
-                                la HEPL. Passionné par l'administration réseau, la virtualisation et la configuration
-                                d'équipements.</p>
-                            <div class="flex justify-center space-x-3">
-                                <a href="discord://-/users/334766673275912193"
-                                    onclick="setTimeout(()=>{window.open('https://discord.com/users/334766673275912193','_blank')},500)"
-                                    rel="noopener noreferrer" aria-label="Discord Jérôme Focant"
-                                    class="text-gray-800 hover:scale-110 transition-transform cursor-pointer flex items-center justify-center">
-                                    <i class="fab fa-discord text-2xl"></i>
-                                    <span class="ml-2 align-middle"></span>
-                                </a>
-                                <a href="mailto:jerome.focant@student.hepl.be" aria-label="Email Jérôme Focant"
-                                    class="text-gray-800 hover:scale-110 transition-transform cursor-pointer">
-                                    <i class="fas fa-envelope text-2xl"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
-                        <div
-                            class="w-full h-64 bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                            <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                <i class="fas fa-user-graduate text-6xl text-purple-600"></i>
-                            </div>
-                        </div>
-                        <div class="p-6 text-center">
-                            <h3 class="text-xl font-bold mb-2">Noa Lamalle</h3>
-                            <p class="text-purple-600 mb-3">Étudiant·e · Réseaux &amp; Télécommunications (Bloc 3)</p>
-                            <p class="text-gray-600 text-sm mb-4">Étudiant·e en Réseaux et Télécommunications (Bloc 3) à
-                                la HEPL. Centré·e sur la cybersécurité, la supervision des infrastructures et le
-                                mentorat.</p>
-                            <div class="flex justify-center space-x-3">
-                                <a href="discord://-/users/455240906942054406"
-                                    onclick="setTimeout(()=>{window.open('https://discord.com/users/455240906942054406','_blank')},500)"
-                                    rel="noopener noreferrer" aria-label="Discord Noa Lamalle"
-                                    class="text-gray-800 hover:scale-110 transition-transform cursor-pointer flex items-center">
-                                    <i class="fab fa-discord text-2xl"></i>
-                                    <span class="ml-2"></span>
-                                </a>
-                                <a href="mailto:noa.lamalle@student.hepl.be" aria-label="Email Noa Lamalle"
-                                    class="text-gray-800 hover:scale-110 transition-transform cursor-pointer">
-                                    <i class="fas fa-envelope text-2xl"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
-                        <div
-                            class="w-full h-64 bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
-                            <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                <i class="fas fa-user-cog text-6xl text-green-600"></i>
-                            </div>
-                        </div>
-                        <div class="p-6 text-center">
-                            <h3 class="text-xl font-bold mb-2">Axel Steveart</h3>
-                            <p class="text-green-600 mb-3">Étudiant · industriel (Bloc 3)</p>
-                            <p class="text-gray-600 text-sm mb-4">Étudiant en Réseaux et Télécommunications (Bloc 3) à
-                                la HEPL. Passionné par l'administration système, le dépannage réseau et l'automatisation
-                                des tâches.</p>
-                            <div class="flex justify-center space-x-3">
-                                <a href="discord://-/users/1176890608321839185"
-                                    onclick="setTimeout(()=>{window.open('https://discord.com/users/1176890608321839185','_blank')},500)"
-                                    rel="noopener noreferrer" aria-label="Discord Axel Steveart"
-                                    class="text-gray-800 hover:scale-110 transition-transform cursor-pointer flex items-center">
-                                    <i class="fab fa-discord text-2xl"></i>
-                                    <span class="ml-2"></span>
-                                </a>
-                                <a href="mailto:axel.steveart@student.hepl.be" aria-label="Email Axel Steveart"
-                                    class="text-gray-800 hover:scale-110 transition-transform cursor-pointer">
-                                    <i class="fas fa-envelope text-2xl"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="py-20 gradient-bg relative interactive-bg">
-            <div class="absolute inset-0 bg-black opacity-40"></div>
-            <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
-                <h2 class="text-5xl font-bold text-white mb-6 neon-text bounce-in">Prêt à nous rejoindre ?</h2>
-                <p class="text-xl text-white mb-8 leading-relaxed slide-in-left">
-                    Rejoignez une communauté dynamique d'étudiants passionnés.
-                    Développez vos compétences, créez des projets innovants et construisez votre avenir dans la tech !
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center slide-in-right">
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#accueil"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Accueil</a>
+                    <a href="#sections"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Sections</a>
+                    <a href="#projets"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Projets</a>
+                    <a href="#equipe"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Équipe</a>
+                    <a href="#contact"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Contact</a>
                     <a href="dashboard/index.php"
-                        class="modern-gradient text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition duration-300 pulse-hover button-3d glow-effect inline-flex items-center justify-center">
-                        <i class="fas fa-user-plus mr-2"></i>
-                        Inscription gratuite
+                        class="px-4 py-2 bg-neutral-800/60 hover:bg-neutral-800/80 text-white rounded-lg text-sm font-medium transition-all duration-300 border border-neutral-800">Connexion</a>
+                    <a href="dashboard/index.php"
+                        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-medium transition-all duration-300">S'inscrire</a>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="w-6 h-6">
+                        <line x1="4" x2="20" y1="12" y2="12"></line>
+                        <line x1="4" x2="20" y1="6" y2="6"></line>
+                        <line x1="4" x2="20" y1="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-800">
+            <div class="px-4 py-4 space-y-3">
+                <a href="#accueil"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Accueil</a>
+                <a href="#sections"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Sections</a>
+                <a href="#projets"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Projets</a>
+                <a href="#equipe"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Équipe</a>
+                <a href="#contact"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Contact</a>
+                <a href="#"
+                    class="block px-4 py-2 bg-neutral-800/60 hover:bg-neutral-800/80 text-white rounded-lg text-sm font-medium transition-all duration-300 text-center border border-neutral-800">Connexion</a>
+                <a href="#"
+                    class="block px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-medium transition-all duration-300 text-center">S'inscrire</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-7xl mx-auto relative">
+            <div class="text-center max-w-4xl mx-auto">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full mb-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="w-4 h-4 text-indigo-500">
+                        <path
+                            d="m9.937 15.5-.5-3m6.126 0-.5 3m-5.626-6 .5-3m5.126 6 .5-3m-8.147 2.853.853.647-.853-.647ZM12 12l.424.321.424-.321m5.599 2.532-.853.647.853-.647ZM3.5 21 12 13.5 20.5 21M12 13.5V8m0-5v2.5">
+                        </path>
+                        <path d="m17 8.5 1-2.5M7 8.5l-1-2.5"></path>
+                        <path d="M7.5 5.5 9 3"></path>
+                        <path d="m17.5 5.5-1.5-2.5"></path>
+                    </svg>
+                    <span class="text-sm text-indigo-400">Rejoignez notre communauté tech</span>
+                </div>
+                <h1
+                    class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight mb-6 leading-tight">
+                    Bienvenue au<br>
+                    <span class="text-indigo-500">Tech Lab</span>
+                </h1>
+                <p class="text-base sm:text-lg md:text-xl text-neutral-400 mb-10 leading-relaxed max-w-3xl mx-auto">
+                    Tech Lab - Votre espace pour apprendre, créer et innover dans le
+                    domaine de la technologie et de la cybersécurité.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="dashboard/index.php"
+                        class="group px-8 py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105">
+                        Rejoindre le club
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                            class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
+                            <path d="M5 12h14"></path>
+                            <path d="m12 5 7 7-7 7"></path>
+                        </svg>
                     </a>
-                    <button
-                        class="glass-effect border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-gray-800 transition duration-300 hover-lift">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        En savoir plus
-                    </button>
+                    <a href="https://discord.gg/3v3wf4BrGa"
+                        class="px-8 py-4 bg-indigo-500 hover:bg-[#4752C4] text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-[#5865F2]/25 hover:shadow-[#5865F2]/40 hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="currentColor" class="w-5 h-5">
+                            <path
+                                d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.298 12.298 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.957-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
+                        </svg>
+                        Rejoindre Discord
+                    </a>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Contactez-nous</h2>
-                    <p class="text-xl text-gray-600">Une question ? N'hésitez pas à nous contacter !</p>
+    <!-- Sections -->
+    <section id="sections" class="py-20 px-4 sm:px-6 lg:px-8 bg-neutral-800/20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Nos Sections</h2>
+                <p class="text-neutral-400 text-base sm:text-lg">Choisissez votre domaine de prédilection et développez
+                    vos compétences</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Développement -->
+                <div
+                    class="group bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 sm:p-8 hover:border-indigo-500/50 transition-all duration-300 hover:scale-105">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-indigo-500 w-7 h-7">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Développement</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-4">Applications web, mobile et logiciels.
+                        Maîtrisez les langages et frameworks modernes.</p>
+                    <ul class="space-y-2 text-sm text-neutral-500">
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Web & Mobile
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Backend & Frontend
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            DevOps
+                        </li>
+                    </ul>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div>
-                        <div class="space-y-8">
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-blue-100 p-3 rounded-full">
-                                    <i class="fas fa-map-marker-alt text-blue-600 text-xl"></i>
+                <!-- Cybersécurité -->
+                <div
+                    class="group bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 sm:p-8 hover:border-indigo-500/50 transition-all duration-300 hover:scale-105">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-indigo-500 w-7 h-7">
+                            <path
+                                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Cybersécurité</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-4">Protection des systèmes, détection des
+                        menaces et sécurité des applications.</p>
+                    <ul class="space-y-2 text-sm text-neutral-500">
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Pentesting
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Ethical Hacking
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Forensics
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Réseaux -->
+                <div
+                    class="group bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 sm:p-8 hover:border-indigo-500/50 transition-all duration-300 hover:scale-105">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-indigo-500 w-7 h-7">
+                            <rect x="16" y="16" width="6" height="6" rx="1"></rect>
+                            <rect x="2" y="16" width="6" height="6" rx="1"></rect>
+                            <rect x="9" y="2" width="6" height="6" rx="1"></rect>
+                            <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"></path>
+                            <path d="M12 12V8"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Réseaux</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-4">Infrastructure réseau, administration
+                        système et cloud computing.</p>
+                    <ul class="space-y-2 text-sm text-neutral-500">
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Configuration réseau
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Cloud & Serveurs
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Virtualisation
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Design -->
+                <div
+                    class="group bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 sm:p-8 hover:border-indigo-500/50 transition-all duration-300 hover:scale-105">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-indigo-500 w-7 h-7">
+                            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                            <path
+                                d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Design</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-4">UI/UX Design, création graphique et
+                        branding pour vos projets.</p>
+                    <ul class="space-y-2 text-sm text-neutral-500">
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            UI/UX Design
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Branding
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4 text-indigo-500">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Prototyping
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projets -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8" id="projets">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Nos Projets</h2>
+                <p class="text-neutral-400 text-base sm:text-lg">Découvrez les projets innovants de notre communauté</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Plateforme supprimée -->
+
+                <!-- Projet 4 -->
+                <div
+                    class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 overflow-hidden hover:border-indigo-500/50 transition-all duration-300 group flex flex-col">
+                    <a href="project.html?project=dashboard-suivi" class="block overflow-hidden h-48 sm:h-56 lg:h-48">
+                        <div
+                            class="h-full w-full overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                            <img src="images/evocon-oee-dashboard.png.webp"
+                                class="w-full h-full object-cover object-center">
+                        </div>
+                    </a>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span
+                                class="px-2 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded text-xs text-indigo-400">Dashboard</span>
+                            <span
+                                class="px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded text-xs text-yellow-400">En
+                                cours</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Dashboard de Suivi</h3>
+                        <p class="text-neutral-400 text-sm mb-4 leading-relaxed flex-1 line-clamp-3">Création d'un
+                            dashboard pour suivre l'avancement des projets, visualisation des tâches et KPI. Widgets
+                            dynamiques, filtres par équipe, et rapports exportables pour le suivi des objectifs.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <div class="flex items-center gap-2 text-sm text-neutral-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="w-4 h-4">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span>6 membres</span>
+                            </div>
+                            <a href="project.html?project=dashboard-suivi"
+                                class="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 transition-all duration-300">
+                                Voir plus
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="w-4 h-4">
+                                    <path d="M5 12h14"></path>
+                                    <path d="m12 5 7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet 5 -->
+                <div
+                    class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 overflow-hidden hover:border-green-500/50 transition-all duration-300 group flex flex-col">
+                    <a href="project.html?project=prosys-aros" class="block overflow-hidden h-48 sm:h-56 lg:h-48">
+                        <div
+                            class="h-full w-full overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                            <img src="images/type_arrosage_AdobeStock_110789919.jpg"
+                                class="w-full h-full object-cover object-center">
+                        </div>
+                    </a>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span
+                                class="px-2 py-1 bg-green-500/10 border border-green-500/20 rounded text-xs text-green-400">IoT</span>
+                            <span
+                                class="px-2 py-1 bg-green-500/10 border border-green-500/20 rounded text-xs text-green-400">Actif</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">proSys.aros</h3>
+                        <p class="text-neutral-400 text-sm mb-4 leading-relaxed flex-1 line-clamp-3">Système d'arrosage
+                            automatisé (IoT) pour jardins et espaces verts. Capteurs connectés, planification
+                            intelligente et application mobile pour suivi et contrôle à distance.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <div class="flex items-center gap-2 text-sm text-neutral-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="w-4 h-4">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span>4 membres</span>
+                            </div>
+                            <a href="project.html?project=prosys-aros"
+                                class="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 transition-all duration-300">
+                                Voir plus
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="w-4 h-4">
+                                    <path d="M5 12h14"></path>
+                                    <path d="m12 5 7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet 6 -->
+                <div
+                    class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 overflow-hidden hover:border-indigo-500/50 transition-all duration-300 group flex flex-col">
+                    <a href="project.html?project=error404-ctf" class="block overflow-hidden h-48 sm:h-56 lg:h-48">
+                        <div
+                            class="h-full w-full overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                            <img src="images/téléchargé (1).jpg" class="w-full h-full object-cover object-center">
+                        </div>
+                    </a>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span
+                                class="px-2 py-1 bg-red-500/10 border border-red-500/20 rounded text-xs text-red-400">CTF</span>
+                            <span
+                                class="px-2 py-1 bg-green-500/10 border border-green-500/20 rounded text-xs text-green-400">Actif</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Error404 (Équipe CTF)</h3>
+                        <p class="text-neutral-400 text-sm mb-4 leading-relaxed flex-1 line-clamp-3">Équipe CTF dédiée
+                            aux compétitions de cybersécurité : challenges, entraînements et compétitions. Organisation
+                            de sessions hebdomadaires et préparation aux CTFs locaux et internationaux.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <div class="flex items-center gap-2 text-sm text-neutral-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="w-4 h-4">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span>10 membres</span>
+                            </div>
+                            <a href="project.html?project=error404-ctf"
+                                class="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 transition-all duration-300">
+                                Voir plus
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" class="w-4 h-4">
+                                    <path d="M5 12h14"></path>
+                                    <path d="m12 5 7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Équipe -->
+    <section id="equipe" class="py-20 px-4 sm:px-6 lg:px-8 bg-neutral-800/20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Notre Équipe</h2>
+                <p class="text-neutral-400 text-base sm:text-lg">Les personnes qui font vivre le club</p>
+            </div>
+
+            <div class="relative">
+                <div class="overflow-hidden" id="team-carousel">
+                    <div class="flex transition-transform duration-500 ease-in-out" id="carousel-track">
+                        <!-- Membre 1 -->
+                        <div class="min-w-full sm:min-w-[50%] lg:min-w-[25%] px-3">
+                            <div
+                                class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 text-center hover:border-indigo-500/50 transition-all duration-300 group hover:scale-105">
+                                <div
+                                    class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 mx-auto mb-4 flex items-center justify-center text-2xl font-semibold">
+                                    JF
                                 </div>
-                                <div>
-                                    <h3 class="font-bold text-gray-800">Adresse</h3>
-                                    <p class="text-gray-600">Rue Peetermans 80
-                                        4100 Seraing, HEPL Campus</p>
+                                <h3 class="text-lg font-semibold mb-1">Jerome focant</h3>
+                                <p class="text-emerald-400 text-sm mb-3">Responsable</p>
+                                <p class="text-neutral-500 text-xs mb-4">Etudiant Reseaux & Telecomunication</p>
+                                <div class="flex justify-center gap-3">
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                            </path>
+                                            <rect width="4" height="12" x="2" y="9"></rect>
+                                            <circle cx="4" cy="4" r="2"></circle>
+                                        </svg>
+                                    </a>
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4">
+                                            </path>
+                                            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                                        </svg>
+                                    </a>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-green-100 p-3 rounded-full">
-                                    <i class="fas fa-phone text-green-600 text-xl"></i>
+                        <!-- Membre 2 -->
+                        <div class="min-w-full sm:min-w-[50%] lg:min-w-[25%] px-3">
+                            <div
+                                class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 text-center hover:border-indigo-500/50 transition-all duration-300 group hover:scale-105">
+                                <div
+                                    class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 mx-auto mb-4 flex items-center justify-center text-2xl font-semibold">
+                                    ME
                                 </div>
-                                <div>
-                                    <h3 class="font-bold text-gray-800">Téléphone</h3>
-                                    <p class="text-gray-600">04 279 55 20</p>
+                                <h3 class="text-lg font-semibold mb-1">Mohammed Elaouali</h3>
+                                <p class="text-cyan-400 text-sm mb-3">Membres</p>
+                                <p class="text-neutral-500 text-xs mb-4">Etudiant Devellopeur applications</p>
+                                <div class="flex justify-center gap-3">
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                            </path>
+                                            <rect width="4" height="12" x="2" y="9"></rect>
+                                            <circle cx="4" cy="4" r="2"></circle>
+                                        </svg>
+                                    </a>
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4">
+                                            </path>
+                                            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                                        </svg>
+                                    </a>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="flex items-center space-x-4">
-                                <div class="bg-purple-100 p-3 rounded-full">
-                                    <i class="fas fa-envelope text-purple-600 text-xl"></i>
+                        <!-- Membre 3 -->
+                        <div class="min-w-full sm:min-w-[50%] lg:min-w-[25%] px-3">
+                            <div
+                                class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 text-center hover:border-indigo-500/50 transition-all duration-300 group hover:scale-105">
+                                <div
+                                    class="w-24 h-24 rounded-full bg-gradient-to-br from-orange-500 to-red-500 mx-auto mb-4 flex items-center justify-center text-2xl font-semibold">
+                                    AD
                                 </div>
-                                <div>
-                                    <h3 class="font-bold text-gray-800">Email</h3>
-                                    <p class="text-gray-600">jerome.focant@student.hepl.be</p>
+                                <h3 class="text-lg font-semibold mb-1">Amina Dida</h3>
+                                <p class="text-orange-400 text-sm mb-3">Responsable Design</p>
+                                <p class="text-neutral-500 text-xs mb-4">Etudiante UI/UX Designer & Graphic Artist</p>
+                                <div class="flex justify-center gap-3">
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                            </path>
+                                            <rect width="4" height="12" x="2" y="9"></rect>
+                                            <circle cx="4" cy="4" r="2"></circle>
+                                        </svg>
+                                    </a>
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4">
+                                            </path>
+                                            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Membre 4 -->
+                        <div class="min-w-full sm:min-w-[50%] lg:min-w-[25%] px-3">
+                            <div
+                                class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 text-center hover:border-indigo-500/50 transition-all duration-300 group hover:scale-105">
+                                <div
+                                    class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 mx-auto mb-4 flex items-center justify-center text-2xl font-semibold">
+                                    NL
+
+                                </div>
+                                <h3 class="text-lg font-semibold mb-1">Noa Lamalle</h3>
+                                <p class="text-indigo-400 text-sm mb-3">Responsable Securite</p>
+                                <p class="text-neutral-500 text-xs mb-4">Etudiant Reseaux & Telecomunication </p>
+                                <div class="flex justify-center gap-3">
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                            </path>
+                                            <rect width="4" height="12" x="2" y="9"></rect>
+                                            <circle cx="4" cy="4" r="2"></circle>
+                                        </svg>
+                                    </a>
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4">
+                                            </path>
+                                            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="min-w-full sm:min-w-[50%] lg:min-w-[25%] px-3">
+                            <div
+                                class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 text-center hover:border-indigo-500/50 transition-all duration-300 group hover:scale-105">
+                                <div
+                                    class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 mx-auto mb-4 flex items-center justify-center text-2xl font-semibold">
+                                    NS
+
+                                </div>
+                                <h3 class="text-lg font-semibold mb-1">Nicolas Salini</h3>
+                                <p class="text-indigo-400 text-sm mb-3">Responsable Securite</p>
+                                <p class="text-neutral-500 text-xs mb-4">Etudiant Reseaux & Telecomunication </p>
+                                <div class="flex justify-center gap-3">
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                            </path>
+                                            <rect width="4" height="12" x="2" y="9"></rect>
+                                            <circle cx="4" cy="4" r="2"></circle>
+                                        </svg>
+                                    </a>
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4">
+                                            </path>
+                                            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="min-w-full sm:min-w-[50%] lg:min-w-[25%] px-3">
+                            <div
+                                class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 text-center hover:border-indigo-500/50 transition-all duration-300 group hover:scale-105">
+                                <div
+                                    class="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 mx-auto mb-4 flex items-center justify-center text-2xl font-semibold">
+                                    AS
+
+                                </div>
+                                <h3 class="text-lg font-semibold mb-1">Axel Stévaert</h3>
+                                <p class="text-emerald-400 text-sm mb-3">Responsable Industriel</p>
+                                <p class="text-neutral-500 text-xs mb-4">Etudiant informatique industriel </p>
+                                <div class="flex justify-center gap-3">
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                            </path>
+                                            <rect width="4" height="12" x="2" y="9"></rect>
+                                            <circle cx="4" cy="4" r="2"></circle>
+                                        </svg>
+                                    </a>
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4">
+                                            </path>
+                                            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="min-w-full sm:min-w-[50%] lg:min-w-[25%] px-3">
+                            <div
+                                class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 text-center hover:border-indigo-500/50 transition-all duration-300 group hover:scale-105">
+                                <div
+                                    class="w-24 h-24 rounded-full bg-gradient-to-br from-orange-500 to-red-500 mx-auto mb-4 flex items-center justify-center text-2xl font-semibold">
+                                    GL
+                                </div>
+                                <h3 class="text-lg font-semibold mb-1">Gabriel Ledina</h3>
+                                <p class="text-orange-400 text-sm mb-3">Responsable Design</p>
+                                <p class="text-neutral-500 text-xs mb-4">Etudiant UI/UX Designer & Graphic Artist</p>
+                                <div class="flex justify-center gap-3">
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                            </path>
+                                            <rect width="4" height="12" x="2" y="9"></rect>
+                                            <circle cx="4" cy="4" r="2"></circle>
+                                        </svg>
+                                    </a>
+                                    <a href="#"
+                                        class="w-8 h-8 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="w-4 h-4 text-neutral-400">
+                                            <path
+                                                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4">
+                                            </path>
+                                            <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                                        </svg>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="bg-gray-50 p-8 rounded-lg">
-                        <form id="contact-form">
-                            <div class="grid md:grid-cols-2 gap-4 mb-4">
-                                <input name="name" id="contact-name" type="text" placeholder="Votre nom"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition duration-300" required>
-                                <input name="email" id="contact-email" type="email" placeholder="Votre email"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition duration-300" required>
-                            </div>
-                            <div class="grid md:grid-cols-2 gap-4 mb-4">
-                                <input name="subject" id="contact-subject" type="text" placeholder="Sujet"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition duration-300">
-                                <input name="phone" id="contact-phone" type="tel" placeholder="Téléphone (optionnel)"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition duration-300">
-                            </div>
-                            <textarea name="message" id="contact-message" placeholder="Votre message" rows="5"
-                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none transition duration-300 mb-4"></textarea>
-                            <button id="contact-submit" type="submit"
-                                class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 pulse-hover">
-                                <i class="fas fa-paper-plane mr-2"></i>
-                                Envoyer le message
-                            </button>
-                            <div id="contact-status" role="status" aria-live="polite" class="mt-4 text-center text-sm"></div>
-                        </form>
-                    </div>
+                <div class="flex justify-center gap-2 mt-8" id="carousel-dots">
+                    <button class="w-2 h-2 rounded-full bg-indigo-500 transition-all duration-300"
+                        data-index="0"></button>
+                    <button class="w-2 h-2 rounded-full bg-neutral-600 transition-all duration-300"
+                        data-index="1"></button>
+                    <button class="w-2 h-2 rounded-full bg-neutral-600 transition-all duration-300"
+                        data-index="2"></button>
+                    <button class="w-2 h-2 rounded-full bg-neutral-600 transition-all duration-300"
+                        data-index="3"></button>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <footer class="bg-gray-800 text-white py-12">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div>
-                        <div class="flex items-center space-x-2 mb-4">
-                            <i class="fas fa-code text-2xl text-blue-400"></i>
-                            <span class="text-xl font-bold">HEPL Tech Lab</span>
+    <!-- Contact -->
+    <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Contactez-nous</h2>
+                    <p class="text-neutral-400 text-base sm:text-lg">Envoyez-nous un message et nous vous répondrons
+                        dans les plus brefs délais</p>
+                </div>
+                <div class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-6 sm:p-8 md:p-10">
+                    <form id="contact-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-neutral-300">Nom</label>
+                                <input type="text" id="contact-name" name="name" placeholder="Votre nom" required
+                                    class="w-full px-4 py-3 bg-neutral-800/60 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-indigo-500 transition-colors duration-300" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-neutral-300">Email</label>
+                                <input type="email" id="contact-email" name="email" placeholder="votre@email.com"
+                                    required
+                                    class="w-full px-4 py-3 bg-neutral-800/60 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-indigo-500 transition-colors duration-300" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-neutral-300">Sujet</label>
+                                <select id="contact-subject" name="subject" required
+                                    class="w-full px-4 py-3 bg-neutral-800/60 border border-neutral-800 rounded-lg text-white focus:outline-none focus:border-indigo-500 transition-colors duration-300">
+                                    <option>Demande d'information</option>
+                                    <option>Rejoindre Tech Lab</option>
+                                    <option>Partenaire / Collaboration</option>
+                                    <option>Autre</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-neutral-300">Section
+                                    (optionnel)</label>
+                                <input type="text" id="contact-section" name="section"
+                                    placeholder="Développement, Cybersécurité..."
+                                    class="w-full px-4 py-3 bg-neutral-800/60 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-indigo-500 transition-colors duration-300" />
+                            </div>
                         </div>
-                        <p class="text-gray-400 leading-relaxed">
-                            Le laboratoire technologique de la HEPL.
-                            Innovation, créativité et passion pour la technologie.
-                        </p>
-                    </div>
 
-                    <div>
-                        <h3 class="font-bold mb-4">Liens rapides</h3>
-                        <ul class="space-y-2 text-gray-400">
-                            <li><a href="#accueil" class="hover:text-white transition duration-300">Accueil</a></li>
-                            <li><a href="#activites" class="hover:text-white transition duration-300">Activités</a></li>
-                            <li><a href="#projets" class="hover:text-white transition duration-300">Projets</a></li>
-                            <li><a href="#equipe" class="hover:text-white transition duration-300">Équipe</a></li>
-                        </ul>
-                    </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-neutral-300">Message</label>
+                            <textarea rows="4" id="contact-message" name="message" required
+                                class="w-full px-4 py-3 bg-neutral-800/60 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-indigo-500 transition-colors duration-300"
+                                placeholder="Votre message..."></textarea>
+                        </div>
 
-                    <div>
-                        <h3 class="font-bold mb-4">Activités</h3>
-                        <ul class="space-y-2 text-gray-400">
-                            <li>Développement Web</li>
-                            <li>Industriel</li>
-                            <li>Cybersécurité</li>
-                            <li>Réseaux informatiques</li>
-                        </ul>
-                    </div>
+                        <div id="contact-status" class="text-sm text-center"></div>
 
-
+                        <button type="submit"
+                            class="w-full px-8 py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105">
+                            Envoyer le message
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-5 h-5">
+                                <line x1="22" x2="11" y1="2" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
 
-                <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                    <p>&copy; 2024 HEPL Tech Lab. Tous droits réservés. Fait avec ❤️ par les étudiants pour les
-                        étudiants.
-                    </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
+                    <div
+                        class="flex flex-col sm:flex-row items-center gap-4 p-4 bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800">
+                        <div
+                            class="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-6 h-6 text-indigo-400">
+                                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                            </svg>
+                        </div>
+                        <div class="text-center sm:text-left min-w-0">
+                            <p class="text-sm text-neutral-400 mb-1">Email</p>
+                            <p class="text-white font-medium text-sm break-words whitespace-normal">
+                                jerome.focant@student.hepl.be</p>
+                        </div>
+                    </div>
+                    <div
+                        class="flex flex-col sm:flex-row items-center gap-4 p-4 bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800">
+                        <div
+                            class="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-6 h-6 text-indigo-400">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </div>
+                        <div class="text-center sm:text-left min-w-0">
+                            <p class="text-sm text-neutral-400 mb-1">Adresse</p>
+                            <p class="text-white font-medium text-sm break-words whitespace-normal">Hepl de seraing</p>
+                        </div>
+                    </div>
+                    <div
+                        class="flex flex-col sm:flex-row items-center gap-4 p-4 bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800">
+                        <div
+                            class="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-6 h-6 text-indigo-400">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="text-center sm:text-left min-w-0">
+                            <p class="text-sm text-neutral-400 mb-1">Horaires</p>
+                            <p class="text-white font-medium text-sm break-words whitespace-normal">Lun-Ven 8h-18h</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </footer>
+        </div>
+    </section>
 
-    </div> <!-- Fin du contenu principal -->
+    <!-- Footer -->
+    <footer class="py-12 px-4 sm:px-6 lg:px-8 border-t border-neutral-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <img src="images/logo.png" alt="Tech Lab Logo" class="h-9 w-auto block">
+                        <span class="text-lg font-semibold tracking-tight">Tech Lab</span>
+                    </div>
+                    <p class="text-sm text-neutral-500 leading-relaxed">Tech Lab -
+                        Votre communauté tech.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Navigation</h4>
+                    <ul class="space-y-2 text-sm text-neutral-500">
+                        <li><a href="#accueil" class="hover:text-white transition-colors duration-300">Accueil</a></li>
+                        <li><a href="#sections" class="hover:text-white transition-colors duration-300">Sections</a>
+                        </li>
+                        <li><a href="#projets" class="hover:text-white transition-colors duration-300">Projets</a></li>
+                        <li><a href="#equipe" class="hover:text-white transition-colors duration-300">Équipe</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Sections</h4>
+                    <ul class="space-y-2 text-sm text-neutral-500">
+                        <li><a href="#" class="hover:text-white transition-colors duration-300">Développement</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-300">Cybersécurité</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-300">Réseaux</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-300">Design</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Suivez-nous</h4>
+                    <div class="flex gap-3">
+                        <a href="https://discord.gg/g3XRVDvvb4"
+                            class="w-10 h-10 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="currentColor" class="w-5 h-5 text-neutral-400">
+                                <path
+                                    d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.298 12.298 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.957-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
+                            </svg>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-5 h-5 text-neutral-400">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                            </svg>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-5 h-5 text-neutral-400">
+                                <path
+                                    d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z">
+                                </path>
+                            </svg>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-5 h-5 text-neutral-400">
+                                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+                            </svg>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-lg bg-neutral-800/60 border border-neutral-800 flex items-center justify-center hover:border-indigo-500/50 transition-colors duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-5 h-5 text-neutral-400">
+                                <path
+                                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                </path>
+                                <rect width="4" height="12" x="2" y="9"></rect>
+                                <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-neutral-800 text-center text-sm text-neutral-500">
+                <p>© 2024 Tech Lab. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
 
-    <script src="js/contact.js" defer></script>
-    <script src="js/script.js" defer></script>
+    <script>
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Carousel (infinite loop without white gap)
+        (function () {
+            const track = document.getElementById('carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            let dots = Array.from(dotsContainer ? dotsContainer.querySelectorAll('button') : []);
+
+            let autoplayInterval;
+            let slides = Array.from(track.children);
+            let originalCount = slides.length;
+            let slidesPerView = getSlidesPerView();
+            let cloneCount = slidesPerView; // clone this many items at start/end
+            let index = cloneCount; // start at first real slide after prepended clones
+
+            function getSlidesPerView() {
+                const w = window.innerWidth;
+                if (w < 640) return 1;
+                if (w >= 640 && w < 1024) return 2;
+                return 4;
+            }
+
+            function clearClones() {
+                // remove nodes with data-clone attribute
+                Array.from(track.querySelectorAll('[data-clone]')).forEach(n => n.remove());
+            }
+
+            function setupClones() {
+                clearClones();
+                slides = Array.from(track.children);
+                originalCount = slides.length;
+                // prepend clones of last cloneCount
+                for (let i = originalCount - cloneCount; i < originalCount; i++) {
+                    const node = slides[i].cloneNode(true);
+                    node.setAttribute('data-clone', 'true');
+                    track.insertBefore(node, track.firstChild);
+                }
+                // append clones of first cloneCount
+                for (let i = 0; i < cloneCount; i++) {
+                    const node = slides[i].cloneNode(true);
+                    node.setAttribute('data-clone', 'true');
+                    track.appendChild(node);
+                }
+                slides = Array.from(track.children);
+            }
+
+            function getSlideWidth() {
+                return slides[0].getBoundingClientRect().width;
+            }
+
+            function moveTo(i, animate = true) {
+                const px = i * getSlideWidth();
+                if (animate) track.style.transition = 'transform 500ms ease-in-out';
+                else track.style.transition = 'none';
+                track.style.transform = `translateX(-${px}px)`;
+            }
+
+            function refreshDots() {
+                // create one dot per original slide (member)
+                if (!dotsContainer) return;
+                const count = originalCount || 0;
+                if (dots.length !== count) {
+                    dotsContainer.innerHTML = '';
+                    for (let i = 0; i < count; i++) {
+                        const btn = document.createElement('button');
+                        btn.className = 'w-2 h-2 rounded-full transition-all duration-300';
+                        btn.dataset.index = i;
+                        // first active
+                        if (i === 0) btn.classList.add('bg-indigo-500'); else btn.classList.add('bg-neutral-600');
+                        dotsContainer.appendChild(btn);
+                    }
+                    dots = Array.from(dotsContainer.querySelectorAll('button'));
+                    dots.forEach(d => d.addEventListener('click', onDotClick));
+                }
+
+                // update active dot according to current slide (normalize modulo originalCount)
+                if (count === 0) return;
+                let activeSlide = (index - cloneCount) % count;
+                if (activeSlide < 0) activeSlide += count;
+                dots.forEach((d, i) => {
+                    if (i === activeSlide) {
+                        d.classList.remove('bg-neutral-600');
+                        d.classList.add('bg-indigo-500');
+                    } else {
+                        d.classList.remove('bg-indigo-500');
+                        d.classList.add('bg-neutral-600');
+                    }
+                });
+            }
+
+            function onDotClick(e) {
+                const target = Number(e.currentTarget.dataset.index || 0);
+                // move to the exact slide corresponding to this member
+                index = cloneCount + target;
+                moveTo(index, true);
+                stopAutoplay();
+                startAutoplay();
+            }
+
+            function nextSlide() {
+                index++;
+                moveTo(index, true);
+            }
+
+            function startAutoplay() {
+                stopAutoplay();
+                autoplayInterval = setInterval(nextSlide, 3000);
+            }
+
+            function stopAutoplay() {
+                if (autoplayInterval) clearInterval(autoplayInterval);
+            }
+
+            // handle seamless jump when hitting clones
+            track.addEventListener('transitionend', () => {
+                const realTotal = originalCount;
+                if (index >= realTotal + cloneCount) {
+                    // jumped into appended clones -> reset back to first real
+                    index = cloneCount;
+                    moveTo(index, false);
+                }
+                if (index < cloneCount) {
+                    // jumped into prepended clones (if navigating backwards)
+                    index = realTotal + (index);
+                    moveTo(index, false);
+                }
+                refreshDots();
+            });
+
+            // pause on hover
+            track.addEventListener('mouseenter', stopAutoplay);
+            track.addEventListener('mouseleave', startAutoplay);
+
+            // initial setup
+            function init() {
+                slidesPerView = getSlidesPerView();
+                cloneCount = slidesPerView;
+                setupClones();
+                slides = Array.from(track.children);
+                index = cloneCount;
+                // force layout then position
+                requestAnimationFrame(() => moveTo(index, false));
+                refreshDots();
+                startAutoplay();
+            }
+
+            // rebuild on resize (debounced)
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    // stop autoplay, rebuild, reposition
+                    stopAutoplay();
+                    // remove inline transition so rebuild doesn't animate
+                    track.style.transition = 'none';
+                    // reset clones based on new slidesPerView
+                    slides = Array.from(track.children).filter(n => !n.hasAttribute('data-clone'));
+                    // remove all children and re-append original slides
+                    const originals = slides.map(n => n.cloneNode(true));
+                    track.innerHTML = '';
+                    originals.forEach(n => track.appendChild(n));
+                    slides = Array.from(track.children);
+                    originalCount = slides.length;
+                    init();
+                }, 120);
+            });
+
+            init();
+        })();
+    </script>
+
+    <style>
+        /* utility to clamp text to 3 lines when needed
+             - include both the -webkit prefixed properties and the newer
+                 standard `line-clamp` for broader compatibility where supported
+             - also tune line-height/margins for better readability in project cards
+        */
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            /* newer (but not yet universal) property */
+            line-clamp: 3;
+            /* avoid showing overflow content on supporting browsers */
+            overflow: hidden;
+            overflow: clip;
+            /* improve readability inside project cards */
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</body>
+
+</html>
+<script src="js/contact.js" defer></script>
+
+
+<!-- Import SwiperJS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- Script pour bloquer l'inscription sur mobile -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fonction pour détecter si l'utilisateur est sur mobile
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                || window.innerWidth <= 768;
+        }
+
+        // Si l'utilisateur est sur mobile, bloquer les liens d'inscription
+        if (isMobileDevice()) {
+            // Sélectionner tous les liens d'inscription
+            const inscriptionLinks = document.querySelectorAll('a[href="dashboard/index.php"]');
+
+            inscriptionLinks.forEach(function (link) {
+                // Empêcher le comportement par défaut du lien
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Afficher un message à l'utilisateur
+                    alert('⚠️ Inscription uniquement disponible sur ordinateur\n\nPour vous inscrire au HEPL Tech Lab, veuillez utiliser un ordinateur de bureau ou un ordinateur portable.\n\nMerci de votre compréhension !');
+                });
+
+                // Modifier visuellement le bouton pour indiquer qu'il est désactivé
+                link.style.opacity = '0.6';
+                link.style.cursor = 'not-allowed';
+
+                // Ajouter un attribut title pour informer l'utilisateur
+                link.setAttribute('title', 'Inscription disponible uniquement sur ordinateur');
+            });
+        }
+    });
+</script>
+
+<!-- Script Swiper pour l'équipe -->
+<script>
+    var swiper = new Swiper(".mySwiper", {
+        slidesPerView: 3,          // 3 visibles à la fois
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        breakpoints: {
+            0: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+        },
+    });
+</script>
 </body>
 
 </html>

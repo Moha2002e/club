@@ -1,91 +1,198 @@
+<?php 
+require_once __DIR__ . '/../actions/projects.php';
+require_once __DIR__ . '/../includes/theme.php';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projets - HEPL Tech Lab</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; color: #333; }
-        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .navbar-content { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
-        .logo { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a { color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 10px; transition: background 0.3s; display: flex; align-items: center; gap: 0.5rem; }
-        .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.2); }
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
-        .page-header { background: white; border-radius: 15px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .create-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; }
-        .create-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
-        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-        .project-card { background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .project-card:hover { transform: translateY(-5px); }
-        .empty-state { text-align: center; padding: 4rem 2rem; color: #666; }
-        .empty-state i { font-size: 4rem; margin-bottom: 1rem; color: #ccc; }
-        .back-btn { background: #6c757d; color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 2rem; }
-        .back-btn:hover { background: #5a6268; }
-    </style>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../images/logo.png">
+    <link rel="apple-touch-icon" href="../images/logo.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="views/assets/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#F1F5F9',
+                        accent: '#10B981'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-content">
-            <div class="logo">
-                <i class="fas fa-code"></i>
-                HEPL Tech Lab
-            </div>
-            <div class="nav-links">
-                <a href="?page=dashboard">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard
-                </a>
-                <a href="?page=projects" class="active">
-                    <i class="fas fa-project-diagram"></i>
-                    Projets
-                </a>
-                <a href="?page=profile">
-                    <i class="fas fa-user"></i>
-                    Profil
-                </a>
-            </div>
-        </div>
-    </nav>
+<body class="bg-gray-50 font-sans theme-<?php echo $currentTheme; ?>">
+    <div class="flex h-screen">
+        <?php include __DIR__ . '/../includes/nav.php'; ?>
 
-    <div class="container">
-        <a href="?page=dashboard" class="back-btn">
-            <i class="fas fa-arrow-left"></i>
-            Retour au dashboard
-        </a>
-        
-        <div class="page-header">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">
-                        <i class="fas fa-project-diagram"></i>
-                        Mes Projets
-                    </h1>
-                    <p style="color: #666;">Gérez vos projets et collaborations</p>
+        <!-- Contenu Principal -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm border-b border-gray-200 p-6">
+                <?php 
+                if (isset($_SESSION['flash_message'])): 
+                    $flashMessage = $_SESSION['flash_message'];
+                    $flashType = $_SESSION['flash_type'] ?? 'info';
+                    unset($_SESSION['flash_message'], $_SESSION['flash_type']);
+                ?>
+                    <div class="mb-4 p-4 rounded-lg <?php echo $flashType === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'; ?>">
+                        <?php echo htmlspecialchars($flashMessage); ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button id="mobile-menu-button" class="p-2 rounded-lg hover:bg-gray-100 transition-colors lg:hidden">
+                            <i data-feather="menu" class="w-6 h-6 text-gray-600"></i>
+                        </button>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                <?php echo $isAdmin ? 'Tous les Projets' : 'Projets Publics'; ?>
+                            </h2>
+                            <p class="text-gray-600 mt-1">
+                                <?php echo $isAdmin ? 'Gérez tous les projets du club' : 'Découvrez et rejoignez des projets'; ?>
+                            </p>
+                        </div>
+                    </div>
+                    <?php if ($isAdmin): ?>
+                        <a href="index.php?page=create_project" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors">
+                            <i data-feather="plus" class="w-5 h-5"></i>
+                            <span>Nouveau projet</span>
+                        </a>
+                    <?php endif; ?>
                 </div>
-                <a href="#" class="create-btn">
-                    <i class="fas fa-plus"></i>
-                    Nouveau projet
-                </a>
-            </div>
-        </div>
+            </header>
 
-        <div class="projects-grid">
-            <!-- État vide pour l'instant -->
-            <div class="empty-state" style="grid-column: 1 / -1;">
-                <i class="fas fa-folder-open"></i>
-                <h3>Aucun projet pour le moment</h3>
-                <p>Commencez par créer votre premier projet !</p>
-                <br>
-                <a href="#" class="create-btn">
-                    <i class="fas fa-rocket"></i>
-                    Créer mon premier projet
-                </a>
+            <div class="flex-1 overflow-auto p-6">
+                <?php if (empty($projects)): ?>
+                    <div class="text-center py-12">
+                        <i data-feather="folder" class="w-16 h-16 mx-auto text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Aucun projet disponible</h3>
+                        <p class="text-gray-500">Il n'y a pas encore de projets publics.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <?php foreach ($projects as $project): ?>
+                            <div class="group bg-primary rounded-xl shadow-lg border border-color hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                                <!-- Bandeau de statut en haut -->
+                                <div class="h-2 <?php 
+                                    $statusColors = [
+                                        'planning' => 'bg-yellow-500',
+                                        'active' => 'bg-green-500',
+                                        'completed' => 'bg-blue-500',
+                                        'on_hold' => 'bg-orange-500'
+                                    ];
+                                    echo $statusColors[$project['status']] ?? 'bg-gray-500';
+                                ?>"></div>
+                                
+                                <div class="p-6 flex-1 flex flex-col">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <h3 class="text-xl font-bold text-primary group-hover:text-blue-600 transition-colors"><?php echo htmlspecialchars($project['title']); ?></h3>
+                                        <span class="badge-status badge-<?php echo $project['status']; ?> animate-pulse">
+                                            <?php 
+                                                $statuses = ['planning' => 'Planification', 'active' => 'Actif', 'completed' => 'Terminé', 'on_hold' => 'En pause'];
+                                                echo $statuses[$project['status']] ?? $project['status']; 
+                                            ?>
+                                        </span>
+                                    </div>
+                                    
+                                    <p class="text-sm text-secondary mb-4 line-clamp-3 leading-relaxed"><?php echo htmlspecialchars($project['description'] ?? 'Pas de description'); ?></p>
+                                    
+                                    <!-- Séparateur décoratif -->
+                                    <div class="w-full h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-2 opacity-50"></div>
+                                    
+                                        <!-- Infos (propriétaire, membres, échéance) placées juste au-dessus des boutons -->
+                                        <div class="flex items-center justify-between text-xs text-secondary mb-2">
+                                            <span class="flex items-center gap-1 bg-secondary px-2 py-1 rounded-full">
+                                                <i data-feather="user" class="w-3 h-3"></i>
+                                                <?php echo htmlspecialchars($project['owner_first_name'] . ' ' . $project['owner_last_name']); ?>
+                                            </span>
+                                            <span class="flex items-center gap-1 bg-secondary px-2 py-1 rounded-full">
+                                                <i data-feather="users" class="w-3 h-3"></i>
+                                                <?php echo $project['member_count']; ?> membres
+                                            </span>
+                                        </div>
+
+                                        <?php if ($project['due_date']): ?>
+                                            <div class="text-xs text-secondary mb-2 flex items-center gap-1 bg-secondary px-2 py-1 rounded-lg inline-block">
+                                                <i data-feather="calendar" class="w-3 h-3"></i>
+                                                Échéance : <?php echo date('d/m/Y', strtotime($project['due_date'])); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    
+                                    <div class="flex flex-col sm:flex-row gap-2 mt-auto">
+                                        <!-- Bouton Voir détails -->
+                                                     <a href="index.php?page=project_detail&id=<?php echo $project['id']; ?>" 
+                                                         class="w-full sm:flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                            <i data-feather="eye" class="w-4 h-4"></i>
+                                            Détails
+                                        </a>
+                                        
+                                        <?php if ($_SESSION['role'] === 'admin'): ?>
+                                            <!-- Admin : Boutons Modifier et Supprimer -->
+                                                          <a href="index.php?page=project_edit&id=<?php echo $project['id']; ?>" 
+                                                              class="w-full sm:flex-1 px-4 py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-sm font-semibold rounded-lg hover:from-yellow-600 hover:to-orange-600 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                                <i data-feather="edit" class="w-4 h-4"></i>
+                                                Modifier
+                                            </a>
+                                            <form method="POST" class="w-full sm:flex-1" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
+                                                <button type="submit" class="w-full px-4 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-semibold rounded-lg hover:from-red-700 hover:to-red-800 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                                    <i data-feather="trash-2" class="w-4 h-4"></i>
+                                                    Supprimer
+                                                </button>
+                                            </form>
+                                        <?php elseif (!$project['is_owner']): ?>
+                                            <?php if ($project['is_member']): ?>
+                                                <!-- Bouton Quitter -->
+                                                <form method="POST" class="w-full sm:flex-1" onsubmit="return confirm('Êtes-vous sûr de vouloir quitter ce projet ?');">
+                                                    <input type="hidden" name="action" value="leave">
+                                                    <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
+                                                    <button type="submit" class="w-full px-4 py-2.5 bg-gradient-to-r from-red-500 to-pink-600 text-white text-sm font-semibold rounded-lg hover:from-red-600 hover:to-pink-700 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                                        <i data-feather="log-out" class="w-4 h-4"></i>
+                                                        Quitter
+                                                    </button>
+                                                </form>
+                                            <?php else: ?>
+                                                <!-- Bouton Rejoindre -->
+                                                <form method="POST" class="w-full sm:flex-1">
+                                                    <input type="hidden" name="action" value="join">
+                                                    <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
+                                                    <button type="submit" class="w-full px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm font-semibold rounded-lg hover:from-green-700 hover:to-emerald-700 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                                        <i data-feather="user-plus" class="w-4 h-4"></i>
+                                                        Rejoindre
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                        <span class="w-full sm:flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-sm font-semibold rounded-lg text-center flex items-center justify-center gap-2 shadow-md">
+                                                <i data-feather="star" class="w-4 h-4"></i>
+                                                Propriétaire
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
-        </div>
+        </main>
     </div>
+
+    <script src="views/assets/js/dashboard.js"></script>
+    <script>
+        feather.replace();
+    </script>
 </body>
 </html>

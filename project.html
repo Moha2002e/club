@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet - ADSCCLUB</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Improve readability for project descriptions */
+        #project-description {
+            color: #d1d5db; /* slightly lighter than neutral-300 for contrast */
+            line-height: 1.75;
+            font-size: 1rem;
+        }
+
+        #project-description p {
+            margin-bottom: 1rem;
+        }
+
+        #project-description h4 {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+
+        #project-description ul {
+            margin-left: 1.25rem;
+            margin-bottom: 1rem;
+            list-style: disc;
+        }
+
+        #project-description li {
+            margin-bottom: 0.45rem;
+        }
+
+        /* Slightly larger text on wider screens */
+        @media (min-width: 1024px) {
+            #project-description { font-size: 1.03rem; }
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 text-white transition-colors duration-300">
+    <!-- Navigation -->
+    <nav
+        class="fixed top-0 w-full bg-neutral-900/80 backdrop-blur-xl border-b border-neutral-800 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center">
+                        <img src="images/logo.png" alt="Tech Lab Logo" class="h-10 w-auto" />
+                    </div>
+                    <span class="text-xl font-semibold tracking-tight">Tech Lab</span>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#accueil"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Accueil</a>
+                    <a href="#sections"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Sections</a>
+                    <a href="#projets"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Projets</a>
+                    <a href="#equipe"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Équipe</a>
+                    <a href="#contact"
+                        class="text-sm text-neutral-400 hover:text-white transition-colors duration-300">Contact</a>
+                    <a href="dashboard/index.php"
+                        class="px-4 py-2 bg-neutral-800/60 hover:bg-neutral-800/80 text-white rounded-lg text-sm font-medium transition-all duration-300 border border-neutral-800">Connexion</a>
+                    <a href="dashboard/index.php"
+                        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-medium transition-all duration-300">S'inscrire</a>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="w-6 h-6">
+                        <line x1="4" x2="20" y1="12" y2="12"></line>
+                        <line x1="4" x2="20" y1="6" y2="6"></line>
+                        <line x1="4" x2="20" y1="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-800">
+            <div class="px-4 py-4 space-y-3">
+                <a href="#accueil"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Accueil</a>
+                <a href="#sections"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Sections</a>
+                <a href="#projets"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Projets</a>
+                <a href="#equipe"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Équipe</a>
+                <a href="#contact"
+                    class="block text-sm text-neutral-400 hover:text-white transition-colors duration-300">Contact</a>
+                <a href="#"
+                    class="block px-4 py-2 bg-neutral-800/60 hover:bg-neutral-800/80 text-white rounded-lg text-sm font-medium transition-all duration-300 text-center border border-neutral-800">Connexion</a>
+                <a href="#"
+                    class="block px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-medium transition-all duration-300 text-center">S'inscrire</a>
+            </div>
+        </div>
+    </nav>
+    <div class="pt-16"></div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <a href="index.html" class="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-indigo-400"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>
+            Retour
+        </a>
+
+        <main id="project-container" class="bg-neutral-800/40 backdrop-blur-xl rounded-xl border border-neutral-800 p-8">
+            <div id="skeleton" class="animate-pulse">
+                <div class="h-8 bg-neutral-700 rounded w-1/3 mb-6"></div>
+                <div class="h-48 bg-neutral-700 rounded mb-6"></div>
+                <div class="h-4 bg-neutral-700 rounded w-3/4 mb-2"></div>
+                <div class="h-4 bg-neutral-700 rounded w-2/3 mb-2"></div>
+                <div class="h-4 bg-neutral-700 rounded w-5/6"></div>
+            </div>
+
+            <article id="project-article" class="hidden">
+                <header class="mb-6">
+                    <div class="flex items-center justify-between">
+                        <h1 id="project-title" class="text-3xl font-semibold"></h1>
+                        <span id="project-status" class="px-3 py-1 rounded-full text-sm font-medium"></span>
+                    </div>
+                    <div class="mt-2 text-neutral-400" id="project-subtitle"></div>
+                </header>
+
+                <section class="mb-6">
+                    <div id="project-banner" class="h-48 bg-gradient-to-br from-indigo-500/20 to-purple-500/10 rounded mb-6 overflow-hidden"></div>
+                    <p id="project-description" class="text-neutral-300 leading-relaxed"></p>
+                </section>
+
+                <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+                    <div class="p-4 bg-neutral-900/30 rounded border border-neutral-800">
+                        <h4 class="text-sm text-neutral-400">Membres</h4>
+                        <div id="project-members" class="font-medium text-white mt-2"></div>
+                    </div>
+                    <div class="p-4 bg-neutral-900/30 rounded border border-neutral-800">
+                        <h4 class="text-sm text-neutral-400">Catégorie</h4>
+                        <div id="project-category" class="font-medium text-white mt-2"></div>
+                    </div>
+                    <div class="p-4 bg-neutral-900/30 rounded border border-neutral-800">
+                        <h4 class="text-sm text-neutral-400">Tags</h4>
+                        <div id="project-tags" class="flex flex-wrap gap-2 mt-2"></div>
+                    </div>
+                </section>
+
+            </article>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile menu & theme toggle (copied from index.html)
+        (function () {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                // Close mobile menu when clicking a link
+                document.querySelectorAll('#mobile-menu a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+            }
+
+            // Smooth scroll for internal anchors
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+
+            // Theme Toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            const bodyEl = document.body;
+            if (themeToggle) {
+                const lightIcon = themeToggle.querySelector('.light-icon');
+                const darkIcon = themeToggle.querySelector('.dark-icon');
+
+                const currentTheme = localStorage.getItem('theme') || 'dark';
+                if (currentTheme === 'light') {
+                    bodyEl.classList.add('light-mode');
+                    if (lightIcon) lightIcon.classList.add('hidden');
+                    if (darkIcon) darkIcon.classList.remove('hidden');
+                }
+
+                themeToggle.addEventListener('click', () => {
+                    bodyEl.classList.toggle('light-mode');
+
+                    if (bodyEl.classList.contains('light-mode')) {
+                        localStorage.setItem('theme', 'light');
+                        if (lightIcon) lightIcon.classList.add('hidden');
+                        if (darkIcon) darkIcon.classList.remove('hidden');
+                    } else {
+                        localStorage.setItem('theme', 'dark');
+                        if (lightIcon) lightIcon.classList.remove('hidden');
+                        if (darkIcon) darkIcon.classList.add('hidden');
+                    }
+                });
+            }
+        })();
+
+        const projects = {
+            'dashboard-suivi': {
+                id: 'dashboard-suivi',
+                title: 'Dashboard de Suivi',
+                subtitle: "Création d'un dashboard pour suivre l'avancement des projets, visualisation des tâches et KPI.",
+                description: `
+                    <p>📊 <strong>Dashboard de Suivi</strong> — Un tableau de bord moderne pour piloter l'avancement des projets et visualiser vos indicateurs clés (KPI).</p>
+
+                    <h4>🔍 Ce que propose le dashboard</h4>
+                    <ul>
+                        <li>Vue d'ensemble des projets : état, priorités, responsables.</li>
+                        <li>Visualisations dynamiques : graphiques de progression, burn-down, histogrammes et heatmaps.</li>
+                        <li>Tableau Kanban pour suivre les tâches par statut (À faire / En cours / Terminé).</li>
+                        <li>Filtres et recherches : par équipe, échéance, labels ou priorité.</li>
+                        <li>Alertes et KPI : notifications sur retards, indicateurs de performance et récap hebdomadaire.</li>
+                    </ul>
+
+                    <h4>⚙️ Stack technique recommandé</h4>
+                    <p>Frontend : <strong>React</strong> + Tailwind / D3 pour les visualisations. Backend : <strong>Node.js</strong> (API REST / WebSocket). Stockage : <strong>Firebase</strong> / base de données SQL/NoSQL selon besoins.</p>
+
+                    <h4>🎯 Pourquoi participer ?</h4>
+                    <ul>
+                        <li>Expérience pratique en développement full‑stack et data visualization.</li>
+                        <li>Travail sur l'UX des tableaux de bord et la performance des requêtes.</li>
+                        <li>Conception d'alerting et d'indicateurs exploitables pour les équipes.</li>
+                    </ul>
+
+                    <h4>🚀 Objectif</h4>
+                    <p>Fournir un tableau de bord fonctionnel et démontrable pour faciliter le pilotage des projets lors des présentations et rendre la coordination plus simple au quotidien.</p>
+
+                    <h4>📩 Rejoindre</h4>
+                    <p>Intéressé·e ? Rejoignez le projet via l'emoji sous l'annonce ou contactez l'équipe de coordination. Tout niveau est utile : front, back, data, design et QA — il y a une place pour chacun·e.</p>
+                `,
+                members: 6,
+                category: 'Web App / Dashboard',
+                status: 'En cours',
+                tags: ['React', 'Node.js', 'Firebase', 'KPI'],
+                image: 'images/evocon-oee-dashboard.png.webp'
+            },
+            'prosys-aros': {
+                id: 'prosys-aros',
+                title: 'proSys.aros',
+                subtitle: 'Système d\'arrosage automatisé (IoT) pour jardins et espaces verts.',
+                description: `
+                    <p>🎉 <strong>Bienvenue sur <em>proSys.aros</em> — notre projet d'arrosage automatisé !</strong></p>
+
+                    <p>Le but : concevoir un système complet et modulaire d'arrosage pilotable à distance, permettant à chacun·e de contribuer selon ses compétences (hardware, software, réseaux ou base de données).</p>
+
+                    <h4>🔹 Composants & responsabilités</h4>
+                    <ul>
+                        <li><strong>Microcontrôleur</strong> (Arduino, ESP32…) et capteurs (humidité du sol, luminosité, température).</li>
+                        <li><strong>Communication</strong> via serveur (TCP/HTTP) — implémentations possibles en Java, C++, Node.js…</li>
+                        <li><strong>Interface utilisateur</strong> (web / desktop / mobile) pour visualiser statut & contrôler le système.</li>
+                        <li><strong>Base de données</strong> pour stocker logs, mesures et programmations.</li>
+                        <li><strong>Réseau & sécurité</strong> : authentification, accès distant sécurisé et bonnes pratiques IoT.</li>
+                    </ul>
+
+                    <h4>💡 Pourquoi participer ?</h4>
+                    <ul>
+                        <li>Choisir le sujet qui vous passionne : web, IoT, bases de données, réseau, architecture logicielle.</li>
+                        <li>Travailler sur un projet concret et modulaire, du prototype au produit déployable.</li>
+                        <li>Apprendre les bonnes pratiques de conception, tests et documentation.</li>
+                        <li>Contribuer à un projet destiné à être présenté lors de la Journée Portes Ouvertes 2026.</li>
+                    </ul>
+
+                    <p>Le projet est volontairement flexible : apportez vos idées, vos modules et votre énergie — on assemble ensuite le tout ensemble.</p>
+
+                    <h4>🎯 Objectif</h4>
+                    <p>Livrer une démonstration fonctionnelle pour la Journée Portes Ouvertes 2026, utilisable par le personnel de l'école et extensible par les futurs étudiants.</p>
+
+                    <h4>📩 Rejoindre / Contact</h4>
+                    <p>Pour plus d'infos ou pour participer, contactez <strong>Jérôme</strong> (chef du projet). Pour rejoindre directement, réagissez avec l'emoji sous l'annonce ou envoyez un message au responsable.</p>
+
+                    <p>On vous attend — venez construire, apprendre et partager ! 🚀</p>
+                `,
+                members: 4,
+                category: 'IoT',
+                status: 'Actif',
+                tags: ['Arduino', 'IoT', 'Sensors'],
+                image: 'images/type_arrosage_AdobeStock_110789919.jpg'
+            },
+            'error404-ctf': {
+                id: 'error404-ctf',
+                title: 'Error404 (Équipe CTF)',
+                subtitle: "Équipe CTF dédiée aux compétitions de cybersécurité : challenges, entraînements et compétitions.",
+                description: `
+                    <p>🎯 <strong>Rejoignez 404notfound — le projet CTF du club !</strong> 🔐</p>
+
+                    <p>Envie de mettre en pratique vos compétences en cybersécurité tout en travaillant en équipe ? 404notfound accueille tout·e·s les étudiant·e·s motivé·e·s, du débutant curieux au compétiteur expérimenté.</p>
+
+                    <h4>🔹 Qu'est‑ce qu'un CTF ?</h4>
+                    <p>Un <em>Capture The Flag</em> (CTF) est une série de challenges techniques (web, crypto, exploitation, reverse, forensics…) où l'on résout des énigmes pour « capturer » des drapeaux. C'est un moyen pratique et stimulant d'apprendre la sécurité.</p>
+
+                    <h4>💡 Pourquoi rejoindre 404notfound ?</h4>
+                    <ul>
+                        <li>Apprendre en équipe et partager les connaissances</li>
+                        <li>Acquérir des compétences pratiques et transférables</li>
+                        <li>Progresser grâce à des challenges adaptés à tous les niveaux</li>
+                        <li>Participer à des compétitions, locales ou en ligne</li>
+                    </ul>
+
+                    <p>Nous privilégions l'entraide et la progression : chaque challenge est une opportunité d'apprendre et de renforcer votre logique et votre esprit d'analyse.</p>
+
+                    <h4>🚀 Comment participer ?</h4>
+                    <p>Réagissez avec l'emoji sous l'annonce ou contactez <strong>Noa Lamalle</strong>, responsable du projet, pour être ajouté·e au groupe. Vous pourrez ensuite rejoindre les entraînements et les compétitions.</p>
+
+                    <p>N'attendez plus — venez relever le défi avec 404notfound !</p>
+                `,
+                members: 10,
+                category: 'Équipe / CTF',
+                status: 'Actif',
+                tags: ['Security', 'CTF', 'Linux'],
+                image: 'images/téléchargé (1).jpg'
+            }
+        };
+
+        function getParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        function renderProject(key) {
+            const data = projects[key];
+            const skeleton = document.getElementById('skeleton');
+            const article = document.getElementById('project-article');
+
+            if (!data) {
+                skeleton.classList.add('hidden');
+                article.classList.remove('hidden');
+                document.getElementById('project-title').textContent = 'Projet introuvable';
+                document.getElementById('project-description').textContent = "Le projet demandé n'existe pas ou n'a pas été trouvé. Retournez à la page des projets.";
+                document.getElementById('project-status').textContent = '';
+                return;
+            }
+
+            // Populate
+            document.getElementById('project-title').textContent = data.title;
+            document.getElementById('project-subtitle').textContent = data.subtitle || '';
+                document.getElementById('project-description').innerHTML = data.description;
+            document.getElementById('project-members').textContent = data.members + ' membres';
+            document.getElementById('project-category').textContent = data.category;
+
+            const statusEl = document.getElementById('project-status');
+            statusEl.textContent = data.status;
+            statusEl.className = 'px-3 py-1 rounded-full text-sm font-medium ' + (data.status.toLowerCase().includes('act') || data.status.toLowerCase().includes('ouvert') ? 'bg-green-500/20 text-green-300 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/20');
+
+            const tagsContainer = document.getElementById('project-tags');
+            tagsContainer.innerHTML = '';
+            (data.tags || []).forEach(t => {
+                const span = document.createElement('span');
+                span.className = 'px-2 py-1 bg-neutral-800/60 border border-neutral-800 rounded text-sm text-neutral-300';
+                span.textContent = t;
+                tagsContainer.appendChild(span);
+            });
+
+            // Banner image (if available)
+            const banner = document.getElementById('project-banner');
+            if (data.image) {
+                banner.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = data.image;
+                img.alt = data.title;
+                // ensure image covers the banner area and is centered
+                img.className = 'h-full object-cover object-center mx-auto';
+                banner.appendChild(img);
+            } else {
+                banner.textContent = data.title.split(' ').slice(0,2).join(' ');
+            }
+
+            // Show
+            skeleton.classList.add('hidden');
+            article.classList.remove('hidden');
+        }
+
+        // On load
+        document.addEventListener('DOMContentLoaded', () => {
+            const key = getParam('project');
+            renderProject(key);
+        });
+    </script>
+
+</body>
+</html>

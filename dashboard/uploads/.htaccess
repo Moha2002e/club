@@ -1,0 +1,17 @@
+# Sécurité pour le dossier uploads
+Options -Indexes
+
+# Autoriser seulement les fichiers PDF
+<FilesMatch "\.(pdf)$">
+    Require all granted
+</FilesMatch>
+
+# Bloquer l'exécution de scripts PHP
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps)$">
+    Require all denied
+</FilesMatch>
+
+# Bloquer l'accès aux autres types de fichiers
+<FilesMatch "\.(exe|bat|cmd|com|pif|scr|vbs|js|html|htm|css|txt|log)$">
+    Require all denied
+</FilesMatch>

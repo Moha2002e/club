@@ -8,38 +8,6 @@ let sidebarOverlay;
 let logoText;
 let navTexts;
 
-// Configuration des onglets
-const tabConfig = {
-    dashboard: {
-        title: 'Tableau de bord',
-        description: 'Vue globale du club - projets, événements et membres'
-    },
-    projects: {
-        title: 'Gestion des projets',
-        description: 'Créez et suivez vos projets avec statut et progression'
-    },
-    members: {
-        title: 'Gestion des membres',
-        description: 'Gérez les membres du club avec leurs rôles et participations'
-    },
-    events: {
-        title: 'Calendrier des événements',
-        description: 'Planifiez et organisez vos événements et réunions'
-    },
-    tasks: {
-        title: 'Gestion des tâches',
-        description: 'Assignez et suivez les tâches par projet et par membre'
-    },
-    messages: {
-        title: 'Messages internes',
-        description: 'Communications et discussions entre membres du club'
-    },
-    settings: {
-        title: 'Paramètres & Authentification',
-        description: 'Configurez les rôles, permissions et profils membres'
-    }
-};
-
 // Détecter si mobile
 function checkIfMobile() {
     isMobile = window.innerWidth < 1024;
@@ -75,20 +43,20 @@ function toggleMobileSidebar() {
 
 // Sidebar desktop
 function toggleDesktopSidebar() {
-    if (!sidebar || !logoText || !navTexts || !toggleButton) return;
+    if (!sidebar || !navTexts || !toggleButton) return;
     
     sidebarCollapsed = !sidebarCollapsed;
     
     if (sidebarCollapsed) {
-        sidebar.classList.remove('w-64');
-        sidebar.classList.add('w-16');
-        logoText.style.display = 'none';
+            sidebar.classList.remove('w-64');
+        sidebar.classList.add('w-24');
+        if (logoText) logoText.style.display = 'none';
         navTexts.forEach(text => text.style.display = 'none');
         toggleButton.innerHTML = '<i data-feather="chevron-right" class="w-5 h-5 text-gray-600"></i>';
     } else {
-        sidebar.classList.remove('w-16');
+        sidebar.classList.remove('w-24');
         sidebar.classList.add('w-64');
-        logoText.style.display = 'block';
+        if (logoText) logoText.style.display = 'block';
         navTexts.forEach(text => text.style.display = 'block');
         toggleButton.innerHTML = '<i data-feather="menu" class="w-5 h-5 text-gray-600"></i>';
     }
@@ -115,7 +83,7 @@ function initializeSidebar() {
     
     if (isMobile) {
         sidebar.classList.add('fixed', 'top-0', 'left-0', 'h-full', '-translate-x-full');
-        sidebar.classList.remove('w-16');
+        sidebar.classList.remove('w-24');
         sidebar.classList.add('w-64');
         if (logoText) logoText.style.display = 'block';
         if (navTexts) navTexts.forEach(text => text.style.display = 'block');
@@ -127,47 +95,6 @@ function initializeSidebar() {
     }
 }
 
-// Changer d'onglet
-function switchTab(tabName) {
-    // Vérifier si on est sur une page de dashboard
-    if (!sidebar) return;
-    
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    const targetTab = document.getElementById(tabName + '-section');
-    if (targetTab) {
-        targetTab.classList.add('active');
-    }
-    
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active', 'bg-primary', 'text-white');
-        item.classList.add('text-gray-700');
-    });
-    
-    const activeNavItem = document.querySelector(`[data-tab="${tabName}"]`);
-    if (activeNavItem) {
-        activeNavItem.classList.add('active', 'bg-primary', 'text-white');
-        activeNavItem.classList.remove('text-gray-700');
-    }
-    
-    const config = tabConfig[tabName];
-    if (config) {
-        const pageTitle = document.getElementById('page-title');
-        const pageDescription = document.getElementById('page-description');
-        if (pageTitle) pageTitle.textContent = config.title;
-        if (pageDescription) pageDescription.textContent = config.description;
-    }
-    
-    if (isMobile) {
-        closeMobileSidebar();
-    }
-    
-    if (typeof feather !== 'undefined') {
-        feather.replace();
-    }
-}
 
 // Notification
 function showNotification(message, type = 'info') {
@@ -217,16 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     initializeSidebar();
     
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const tabName = this.getAttribute('data-tab');
-            if (tabName) {
-                switchTab(tabName);
-            }
-        });
-    });
-    
     if (toggleButton) {
         toggleButton.addEventListener('click', toggleSidebar);
     }
@@ -258,123 +175,79 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Ne pas appeler switchTab si on n'est pas sur une page de dashboard
+    // Initialiser le dashboard si on est sur la page
     if (sidebar) {
-        switchTab('dashboard');
-    }
-    
-    // Ne pas exécuter ces fonctions si on n'est pas sur une page de dashboard
-    if (sidebar) {
-        setTimeout(() => {
-            showNotification('Dashboard Club Pro chargé avec succès !', 'success');
-        }, 1000);
-        
-        // Initialiser le tableau de bord
         initDashboard();
-        
-        // Ajouter des écouteurs d'événements
         addEventListeners();
     }
 });
 
-// Supprimé le deuxième DOMContentLoaded pour éviter les conflits
-
+// Initialiser le dashboard
 function initDashboard() {
     if (!sidebar) return;
     
     console.log('Dashboard initialized');
     
-    // Ajouter des animations de carte
-    const cards = document.querySelectorAll('.dashboard-card');
+    // Ajouter des animations aux cartes
+    const cards = document.querySelectorAll('.bg-white');
     cards.forEach((card, index) => {
         setTimeout(() => {
             card.classList.add('card-animation');
-        }, index * 100);
+        }, index * 50);
     });
     
-    // Mettre à jour la date/heure si l'élément existe
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-}
-
-function initTabs() {
-    const navItems = document.querySelectorAll('.nav-item');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    navItems.forEach(navItem => {
-        navItem.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Retirer la classe active de tous les éléments de navigation et contenus d'onglets
-            navItems.forEach(item => item.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Ajouter la classe active à l'élément de navigation cliqué
-            this.classList.add('active');
-            
-            // Afficher le contenu de l'onglet correspondant
-            const targetTab = this.getAttribute('data-tab') || this.getAttribute('href')?.substring(1);
-            if (targetTab) {
-                const targetContent = document.getElementById(targetTab);
-                if (targetContent) {
-                    targetContent.classList.add('active');
-                }
-            }
-        });
-    });
-}
-
-function addEventListeners() {
-    // Ajouter des gestionnaires de clic pour les boutons
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Ajouter un état de chargement
-            this.classList.add('loading');
-            setTimeout(() => {
-                this.classList.remove('loading');
-            }, 1000);
-        });
-    });
-    
-    // Validation de formulaire
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            if (!validateForm(this)) {
-                e.preventDefault();
-            }
-        });
-    });
-}
-
-function updateDateTime() {
-    const dateTimeElement = document.getElementById('current-datetime');
-    if (dateTimeElement) {
-        const now = new Date();
-        dateTimeElement.textContent = now.toLocaleString();
+    // Rafraîchir les icônes Feather
+    if (typeof feather !== 'undefined') {
+        feather.replace();
     }
 }
 
-function validateForm(form) {
-    const required = form.querySelectorAll('[required]');
-    let isValid = true;
+function addEventListeners() {
+    // Gestionnaire pour le bouton "Nouvelle tâche"
+    const newTaskBtn = document.querySelector('.btn-new-task');
+    if (newTaskBtn) {
+        newTaskBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showNotification('Fonctionnalité à venir', 'info');
+        });
+    }
     
-    required.forEach(field => {
-        if (!field.value.trim()) {
-            field.classList.add('error');
-            isValid = false;
-        } else {
-            field.classList.remove('error');
-        }
+    // Animation hover pour les cartes de tâches
+    const taskCards = document.querySelectorAll('.task-card');
+    taskCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
     });
     
-    return isValid;
+    // Animation hover pour les cartes de projets
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
 }
 
-
-function refreshData() {
-    // Ajouter un appel AJAX pour rafraîchir les données du tableau de bord
-    console.log('Refreshing dashboard data...');
-    showNotification('Data refreshed successfully', 'success');
+// Rafraîchir les données du dashboard
+function refreshDashboardData() {
+    fetch('?ajax=1')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Dashboard data refreshed', data);
+                showNotification('Données mises à jour', 'success');
+                // Mettre à jour l'interface si nécessaire
+            }
+        })
+        .catch(error => {
+            console.error('Erreur de rafraîchissement:', error);
+            showNotification('Erreur de rafraîchissement', 'error');
+        });
 }

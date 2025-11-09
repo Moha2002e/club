@@ -1,82 +1,159 @@
 <?php
-session_start();
-header('Content-Type: application/json');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../DAO/EventsDAO.php';
+require_once __DIR__ . '/../DAO/ProjectDAO.php';
+require_once __DIR__ . '/../DAO/UserDAO.php';
 
-$dao = new EventsDAO();
-$dao->createEventsTable();
+$eventsDAO = new EventsDAO();
+$projectDAO = new ProjectDAO();
+$userDAO = new UserDAO();
 
-$action = $_POST['action'] ?? $_GET['action'] ?? '';
-$response = ['success' => false, 'message' => 'Action inconnue'];
+$isAdmin = ($_SESSION['role'] ?? '') === 'admin';
+$userId = $_SESSION['user_id'] ?? null;
 
-function isAdmin() { return isset($_SESSION['role']) && $_SESSION['role'] === 'admin'; }
+// Récupérer les paramètres de filtrage
+$filterProject = $_GET['project'] ?? '';
+$filterType = $_GET['type'] ?? '';
+$filterDate = $_GET['date'] ?? '';
 
-function normalizeDate($input) {
-    if (!$input) return '';
-    $s = trim(str_replace('T', ' ', $input));
-    if (preg_match('/^(\d{2})-(\d{2})-(\d{4})$/', $s, $m)) {
-        return $m[3] . '-' . $m[2] . '-' . $m[1];
-    }
-    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $s)) {
-        return $s;
-    }
-    // If datetime provided, keep only date
-    if (preg_match('/^(\d{4}-\d{2}-\d{2})\s+\d{2}:\d{2}(?::\d{2})?$/', $s, $m)) {
-        return $m[1];
-    }
-    return $s;
+// Récupérer les événements selon le rôle et les filtres
+if ($isAdmin) {
+    // Admin voit tous les événements avec filtres
+    $events = $eventsDAO->getAllEventsWithFilters($filterProject, $filterType, $filterDate);
+} else {
+    // Étudiant voit les événements des projets dont il est membre
+    $events = $eventsDAO->getEventsByUserProjectsWithFilters($userId, $filterProject, $filterType, $filterDate);
 }
 
-try {
+// Enrichir les événements avec les informations supplémentaires
+foreach ($events as $key => $event) {
+    // Récupérer le créateur
+    $creator = $userDAO->getUserById($event['created_by']);
+    $events[$key]['creator_name'] = $creator ? $creator['first_name'] . ' ' . $creator['last_name'] : 'Inconnu';
+    
+    // Récupérer le projet si c'est un événement de projet
+    if ($event['project_id']) {
+        $project = $projectDAO->getProjectById($event['project_id']);
+        $events[$key]['project_name'] = $project ? $project['title'] : 'Projet supprimé';
+    } else {
+        $events[$key]['project_name'] = 'Événement général';
+    }
+    
+    // Récupérer les participants si c'est un événement spécifique
+    if ($event['target_type'] === 'specific') {
+        $participants = $eventsDAO->getEventParticipants($event['id']);
+        $events[$key]['participants'] = $participants;
+        $events[$key]['participants_count'] = count($participants);
+    } else {
+        $events[$key]['participants'] = [];
+        $events[$key]['participants_count'] = 0;
+    }
+}
+
+// Récupérer les données pour les filtres
+if ($isAdmin) {
+    $allProjects = $projectDAO->getAllProjects();
+} else {
+    $allProjects = $projectDAO->getProjectsByUserId($userId, 100); // Limite élevée pour les filtres
+}
+
+// Créer les listes pour les filtres
+$eventTypes = [
+    'meeting' => 'Réunion',
+    'deadline' => 'Échéance',
+    'milestone' => 'Jalon',
+    'presentation' => 'Présentation',
+    'training' => 'Formation',
+    'social' => 'Événement social',
+    'other' => 'Autre'
+];
+
+// Traiter les actions POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
+    
     switch ($action) {
-        case 'list_upcoming':
-            $includePrivate = isAdmin();
-            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
-            $response = ['success'=>true, 'data'=>$dao->listUpcoming($includePrivate, $limit)];
-            break;
-        case 'list_past':
-            $includePrivate = isAdmin();
-            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
-            $response = ['success'=>true, 'data'=>$dao->listPast($includePrivate, $limit)];
-            break;
-        case 'get_by_id':
-            if (!isset($_GET['id'])) { $response = ['success'=>false,'message'=>'ID manquant']; break; }
-            $event = $dao->getById((int)$_GET['id']);
-            $response = $event ? ['success'=>true,'data'=>$event] : ['success'=>false,'message'=>'Introuvable'];
-            break;
-        case 'create':
-            if (!isAdmin()) { $response = ['success'=>false,'message'=>'Permissions insuffisantes']; break; }
+        case 'create_event':
+            if (!$isAdmin) {
+                $_SESSION['flash_message'] = 'Accès non autorisé.';
+                $_SESSION['flash_type'] = 'error';
+                break;
+            }
+            
             $title = trim($_POST['title'] ?? '');
             $description = trim($_POST['description'] ?? '');
-            $location = trim($_POST['location'] ?? '');
-            $start = normalizeDate($_POST['start_date'] ?? ($_POST['start_datetime'] ?? ''));
-            $end = normalizeDate($_POST['end_date'] ?? ($_POST['end_datetime'] ?? ''));
-            $visibility = $_POST['visibility'] ?? 'public';
-            $createdBy = $_SESSION['user_id'] ?? 0;
-            $response = $dao->create($title, $description, $location, $start, $end ?: null, $visibility, $createdBy);
+            $event_date = $_POST['event_date'] ?? '';
+            $event_time = $_POST['event_time'] ?? '';
+            $event_type = $_POST['event_type'] ?? '';
+            $project_id = $_POST['project_id'] ?? null;
+            $target_type = $_POST['target_type'] ?? 'all';
+            $participants = $_POST['participants'] ?? [];
+            
+            $errors = [];
+            
+            if (empty($title)) {
+                $errors[] = 'Le titre est requis.';
+            }
+            
+            if (empty($event_date)) {
+                $errors[] = 'La date est requise.';
+            }
+            
+            if (empty($event_type)) {
+                $errors[] = 'Le type d\'événement est requis.';
+            }
+            
+            if (empty($errors)) {
+                $data = [
+                    'title' => $title,
+                    'description' => $description,
+                    'event_date' => $event_date,
+                    'event_time' => $event_time,
+                    'event_type' => $event_type,
+                    'project_id' => $project_id ?: null,
+                    'target_type' => $target_type,
+                    'created_by' => $userId
+                ];
+                
+                $result = $eventsDAO->createEvent($data, $participants);
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'error';
+                
+                if ($result['success']) {
+                    // Rediriger sans filtres pour voir tous les événements
+                    header('Location: index.php?page=events');
+                    exit();
+                }
+            } else {
+                $_SESSION['flash_message'] = implode(' ', $errors);
+                $_SESSION['flash_type'] = 'error';
+            }
             break;
-        case 'update':
-            if (!isAdmin()) { $response = ['success'=>false,'message'=>'Permissions insuffisantes']; break; }
-            $id = (int)$_POST['id'];
-            $title = trim($_POST['title'] ?? '');
-            $description = trim($_POST['description'] ?? '');
-            $location = trim($_POST['location'] ?? '');
-            $start = normalizeDate($_POST['start_date'] ?? ($_POST['start_datetime'] ?? ''));
-            $end = normalizeDate($_POST['end_date'] ?? ($_POST['end_datetime'] ?? ''));
-            $visibility = $_POST['visibility'] ?? 'public';
-            $response = $dao->update($id, $title, $description, $location, $start, $end ?: null, $visibility);
+            
+        case 'delete_event':
+            if (!$isAdmin) {
+                $_SESSION['flash_message'] = 'Accès non autorisé.';
+                $_SESSION['flash_type'] = 'error';
+                break;
+            }
+            
+            $eventId = $_POST['event_id'] ?? null;
+            if ($eventId) {
+                $result = $eventsDAO->deleteEvent($eventId);
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'error';
+            } else {
+                $_SESSION['flash_message'] = 'ID d\'événement invalide.';
+                $_SESSION['flash_type'] = 'error';
+            }
             break;
-        case 'delete':
-            if (!isAdmin()) { $response = ['success'=>false,'message'=>'Permissions insuffisantes']; break; }
-            $id = (int)($_POST['id'] ?? 0);
-            $response = ['success'=>$dao->delete($id)];
-            break;
-        default:
-            $response = ['success'=>false,'message'=>'Action non supportée'];
     }
-} catch (Throwable $e) {
-    $response = ['success'=>false,'message'=>'Erreur: '.$e->getMessage()];
+    
+    header('Location: index.php?page=events');
+    exit();
 }
+?>
 
-echo json_encode($response);

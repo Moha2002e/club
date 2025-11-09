@@ -1,193 +1,99 @@
 <?php
-/**
- * Actions pour la gestion des tâches
- */
-
-// Inclure les dépendances nécessaires
-require_once __DIR__ . '/../conf/database.php';
-require_once __DIR__ . '/../DAO/TaskDAO.php';
-require_once __DIR__ . '/../DAO/UserDAO.php';
-
-// Vérifier que l'utilisateur est connecté
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Accès refusé - Connexion requise']);
-    exit();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
+require_once __DIR__ . '/../DAO/TaskDAO.php';
+require_once __DIR__ . '/../DAO/ProjectDAO.php';
+require_once __DIR__ . '/../DAO/UserDAO.php';
+
 $taskDAO = new TaskDAO();
+$projectDAO = new ProjectDAO();
 $userDAO = new UserDAO();
-$taskDAO->createTasksTable(); // Créer la table si elle n'existe pas
 
-$response = ['success' => false, 'message' => 'Action non reconnue'];
+$isAdmin = ($_SESSION['role'] ?? '') === 'admin';
+$userId = $_SESSION['user_id'] ?? null;
 
+// Récupérer les paramètres de filtrage
+$filterStatus = $_GET['status'] ?? '';
+$filterPriority = $_GET['priority'] ?? '';
+$filterProject = $_GET['project'] ?? '';
+$filterCreator = $_GET['creator'] ?? '';
+
+// Récupérer les tâches selon le rôle et les filtres
+if ($isAdmin) {
+    // Admin voit toutes les tâches avec filtres
+    $tasks = $taskDAO->getAllTasksWithFilters($filterStatus, $filterPriority, $filterProject, $filterCreator);
+} else {
+    // Étudiant voit les tâches des projets dont il est membre
+    $tasks = $taskDAO->getTasksByUserProjectsWithFilters($userId, $filterStatus, $filterPriority, $filterProject, $filterCreator);
+}
+
+// Enrichir les tâches avec les informations supplémentaires
+foreach ($tasks as $key => $task) {
+    // Récupérer le créateur
+    $creator = $userDAO->getUserById($task['created_by']);
+    $tasks[$key]['creator_name'] = $creator ? $creator['first_name'] . ' ' . $creator['last_name'] : 'Inconnu';
+    
+    // Récupérer le projet
+    $project = $projectDAO->getProjectById($task['project_id']);
+    $tasks[$key]['project_name'] = $project ? $project['title'] : 'Projet supprimé';
+    
+    // Récupérer les utilisateurs assignés
+    $assignees = $taskDAO->getTaskAssignees($task['id']);
+    $tasks[$key]['assignees'] = $assignees;
+    $tasks[$key]['assignees_count'] = count($assignees);
+}
+
+// Récupérer les données pour les filtres
+if ($isAdmin) {
+    $allProjects = $projectDAO->getAllProjects();
+    $allUsers = $userDAO->getAllMembers();
+} else {
+    $allProjects = $projectDAO->getProjectsByUserId($userId, 100); // Limite élevée pour les filtres
+    $allUsers = []; // Les étudiants ne voient pas tous les utilisateurs dans les filtres
+}
+
+// Créer les listes pour les filtres
+$statusOptions = [
+    'pending' => 'En attente',
+    'in_progress' => 'En cours',
+    'completed' => 'Terminée',
+    'cancelled' => 'Annulée'
+];
+
+$priorityOptions = [
+    'low' => 'Faible',
+    'medium' => 'Moyenne',
+    'high' => 'Élevée',
+    'urgent' => 'Urgente'
+];
+
+// Traiter les actions POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
     
     switch ($action) {
-        case 'get_all_tasks':
-            $tasks = $taskDAO->getAllTasks();
-            if ($tasks !== false) {
-                $response = ['success' => true, 'tasks' => $tasks];
-            } else {
-                $response = ['success' => false, 'message' => 'Erreur lors de la récupération des tâches'];
-            }
-            break;
-            
-        case 'get_user_tasks':
-            $userId = $_SESSION['user_id'];
-            $tasks = $taskDAO->getTasksByUser($userId);
-            if ($tasks !== false) {
-                $response = ['success' => true, 'tasks' => $tasks];
-            } else {
-                $response = ['success' => false, 'message' => 'Erreur lors de la récupération des tâches'];
-            }
-            break;
-            
-        case 'get_task_by_id':
-            if (isset($_POST['task_id'])) {
-                $taskId = (int)$_POST['task_id'];
-                $task = $taskDAO->getTaskById($taskId);
-                if ($task !== false) {
-                    $response = ['success' => true, 'task' => $task];
-                } else {
-                    $response = ['success' => false, 'message' => 'Tâche non trouvée'];
-                }
-            } else {
-                $response = ['success' => false, 'message' => 'ID tâche manquant'];
-            }
-            break;
-            
-        case 'create_task':
-            // Admin uniquement pour créer
-            if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-                $response = ['success' => false, 'message' => 'Permissions insuffisantes'];
-                break;
-            }
-            if (isset($_POST['title']) && isset($_POST['priority']) && isset($_POST['created_by']) && isset($_POST['project_id'])) {
-                $title = trim($_POST['title']);
-                $description = trim($_POST['description'] ?? '');
-                $priority = $_POST['priority'];
-                $assignedTo = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
-                $projectId = (int)$_POST['project_id'];
-                $dueDate = !empty($_POST['due_date']) ? $_POST['due_date'] : null;
-                $createdBy = (int)$_POST['created_by'];
-                $assignedUsers = isset($_POST['assigned_users']) ? array_filter($_POST['assigned_users']) : [];
-                
-                $result = $taskDAO->createTask($title, $description, $priority, $assignedTo, $projectId, $dueDate, $createdBy, $assignedUsers);
-                $response = $result;
-            } else {
-                $response = ['success' => false, 'message' => 'Paramètres manquants'];
-            }
-            break;
-            
-        case 'update_task':
-            // Admin uniquement pour mise à jour des détails complets
-            if (!isset($_POST['task_id']) || !isset($_POST['title']) || !isset($_POST['priority'])) {
-                $response = ['success' => false, 'message' => 'Paramètres manquants'];
-                break;
-            }
-            if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-                $response = ['success' => false, 'message' => 'Permissions insuffisantes'];
-                break;
-            }
-            if (isset($_POST['task_id']) && isset($_POST['title']) && isset($_POST['priority'])) {
-                $taskId = (int)$_POST['task_id'];
-                $title = trim($_POST['title']);
-                $description = trim($_POST['description'] ?? '');
-                $status = $_POST['status'];
-                $priority = $_POST['priority'];
-                $assignedTo = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
-                $projectId = !empty($_POST['project_id']) ? (int)$_POST['project_id'] : null;
-                $dueDate = !empty($_POST['due_date']) ? $_POST['due_date'] : null;
-                
-                $result = $taskDAO->updateTask($taskId, $title, $description, $status, $priority, $assignedTo, $projectId, $dueDate);
-                $response = $result;
-            } else {
-                $response = ['success' => false, 'message' => 'Paramètres manquants'];
-            }
-            break;
-            
-        case 'update_task_status':
-            if (isset($_POST['task_id']) && isset($_POST['status'])) {
-                $taskId = (int)$_POST['task_id'];
-                $status = $_POST['status'];
-                // Autorisé si admin ou si l'utilisateur est l'assigné de la tâche
-                $task = $taskDAO->getTaskById($taskId);
-                if (!$task) {
-                    $response = ['success' => false, 'message' => 'Tâche non trouvée'];
-                    break;
-                }
-                $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-                $isAssignee = isset($task['assigned_to']) && (int)$task['assigned_to'] === (int)$_SESSION['user_id'];
-                if (!$isAdmin && !$isAssignee) {
-                    $response = ['success' => false, 'message' => 'Permissions insuffisantes'];
-                    break;
-                }
-                $result = $taskDAO->updateTaskStatus($taskId, $status);
-                $response = $result;
-            } else {
-                $response = ['success' => false, 'message' => 'Paramètres manquants'];
-            }
-            break;
-            
         case 'delete_task':
-            // Admin uniquement pour supprimer
-            if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-                $response = ['success' => false, 'message' => 'Permissions insuffisantes'];
+            if (!$isAdmin) {
+                $_SESSION['flash_message'] = 'Accès non autorisé.';
+                $_SESSION['flash_type'] = 'error';
                 break;
             }
-            if (isset($_POST['task_id'])) {
-                $taskId = (int)$_POST['task_id'];
+            
+            $taskId = $_POST['task_id'] ?? null;
+            if ($taskId) {
                 $result = $taskDAO->deleteTask($taskId);
-                $response = $result;
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'error';
             } else {
-                $response = ['success' => false, 'message' => 'ID tâche manquant'];
+                $_SESSION['flash_message'] = 'ID de tâche invalide.';
+                $_SESSION['flash_type'] = 'error';
             }
             break;
-            
-        case 'get_tasks_stats':
-            $stats = $taskDAO->getTasksStats();
-            if ($stats !== false) {
-                $response = ['success' => true, 'stats' => $stats];
-            } else {
-                $response = ['success' => false, 'message' => 'Erreur lors de la récupération des statistiques'];
-            }
-            break;
-            
-        case 'get_overdue_tasks':
-            $tasks = $taskDAO->getOverdueTasks();
-            if ($tasks !== false) {
-                $response = ['success' => true, 'tasks' => $tasks];
-            } else {
-                $response = ['success' => false, 'message' => 'Erreur lors de la récupération des tâches en retard'];
-            }
-            break;
-            
-        case 'get_upcoming_tasks':
-            $tasks = $taskDAO->getUpcomingTasks();
-            if ($tasks !== false) {
-                $response = ['success' => true, 'tasks' => $tasks];
-            } else {
-                $response = ['success' => false, 'message' => 'Erreur lors de la récupération des tâches à venir'];
-            }
-            break;
-            
-        case 'get_users_for_assignment':
-            $users = $userDAO->getAllUsers();
-            if ($users !== false) {
-                $response = ['success' => true, 'users' => $users];
-            } else {
-                $response = ['success' => false, 'message' => 'Erreur lors de la récupération des utilisateurs'];
-            }
-            break;
-            
-        default:
-            $response = ['success' => false, 'message' => 'Action non reconnue'];
     }
+    
+    header('Location: index.php?page=tasks');
+    exit();
 }
-
-// Retourner la réponse en JSON
-header('Content-Type: application/json');
-echo json_encode($response);
 ?>

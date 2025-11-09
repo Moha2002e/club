@@ -1,4 +1,15 @@
 <?php
+// Si l'utilisateur est déjà connecté, rediriger vers le dashboard
+if (isset($_SESSION['user_id'])) {
+    header('Location: index.php?page=dashboard');
+    exit();
+}
+
+// Traiter l'authentification seulement si c'est une soumission de formulaire
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    require_once __DIR__ . '/../actions/auth.php';
+}
+
 // Récupérer les messages flash
 $message = '';
 $messageType = '';
@@ -15,228 +26,41 @@ if (isset($_SESSION['flash_message'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - HEPL Tech Lab</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../../images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../../images/logo.png">
+    <link rel="apple-touch-icon" href="../../images/logo.png">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .auth-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-            max-width: 900px;
-            width: 100%;
-            min-height: 600px;
-            display: flex;
-        }
-
-        .auth-forms {
-            flex: 1;
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .auth-side {
-            flex: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            padding: 60px 40px;
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-container {
-            display: none;
-        }
-
-        .form-container.active {
-            display: block;
-        }
-
-        .form-title {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .form-subtitle {
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e1e1e1;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .switch-form {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .switch-form a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .switch-form a:hover {
-            text-decoration: underline;
-        }
-
-        .message {
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .side-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        .side-content p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 768px) {
-            .auth-container {
-                flex-direction: column;
-                max-width: 400px;
-            }
-
-            .auth-side {
-                padding: 40px;
-            }
-
-            .auth-forms {
-                padding: 40px;
-            }
-        }
-
-        .input-icon {
-            position: relative;
-        }
-
-        .input-icon input {
-            padding-left: 45px;
-        }
-
-        .input-icon i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-        }
-    </style>
+    <link href="views/assets/css/login.css" rel="stylesheet">
 </head>
 <body>
     <div class="auth-container">
         <div class="auth-forms">
             <?php if ($message): ?>
-                <div class="message <?php echo $messageType; ?>">
+                <div class="message <?php echo htmlspecialchars($messageType); ?>">
                     <?php echo htmlspecialchars($message); ?>
                 </div>
             <?php endif; ?>
 
             <!-- Formulaire de connexion -->
             <div class="form-container active" id="loginForm">
+                <div class="form-logo">
+                    <img src="../images/logo.png" alt="Tech Lab Logo">
+                    <span>Tech Lab</span>
+                </div>
                 <h2 class="form-title">Connexion</h2>
                 <p class="form-subtitle">Accédez à votre espace HEPL Tech Lab</p>
                 
-                <form method="POST">
+                <form method="POST" action="index.php?page=login">
                     <input type="hidden" name="action" value="login">
                     
                     <div class="form-group">
                         <label for="login_username">Nom d'utilisateur ou Email</label>
                         <div class="input-icon">
                             <i class="fas fa-user"></i>
-                            <input type="text" id="login_username" name="login_username" required>
+                            <input type="text" id="login_username" name="login_username" required autocomplete="username">
                         </div>
                     </div>
                     
@@ -244,7 +68,7 @@ if (isset($_SESSION['flash_message'])) {
                         <label for="login_password">Mot de passe</label>
                         <div class="input-icon">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="login_password" name="login_password" required>
+                            <input type="password" id="login_password" name="login_password" required autocomplete="current-password">
                         </div>
                     </div>
                     
@@ -254,32 +78,36 @@ if (isset($_SESSION['flash_message'])) {
                 </form>
                 
                 <div class="switch-form">
-                    <p>Pas encore de compte ? <a href="#" onclick="switchToRegister()">S'inscrire</a></p>
+                    <p>Pas encore de compte ? <a href="#" onclick="switchToRegister(); return false;">S'inscrire</a></p>
                 </div>
             </div>
 
             <!-- Formulaire d'inscription -->
             <div class="form-container" id="registerForm">
+                <div class="form-logo">
+                    <img src="../images/logo.png" alt="Tech Lab Logo">
+                    <span>Tech Lab</span>
+                </div>
                 <h2 class="form-title">Inscription</h2>
                 <p class="form-subtitle">Rejoignez la communauté HEPL Tech Lab</p>
                 
-                <form method="POST">
+                <form method="POST" action="index.php?page=login">
                     <input type="hidden" name="action" value="register">
                     
-                    <div style="display: flex; gap: 15px;">
-                        <div class="form-group" style="flex: 1;">
+                    <div class="form-row">
+                        <div class="form-group">
                             <label for="first_name">Prénom</label>
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
-                                <input type="text" id="first_name" name="first_name" required>
+                                <input type="text" id="first_name" name="first_name" required autocomplete="given-name">
                             </div>
                         </div>
                         
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group">
                             <label for="last_name">Nom</label>
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
-                                <input type="text" id="last_name" name="last_name" required>
+                                <input type="text" id="last_name" name="last_name" required autocomplete="family-name">
                             </div>
                         </div>
                     </div>
@@ -288,7 +116,7 @@ if (isset($_SESSION['flash_message'])) {
                         <label for="username">Nom d'utilisateur</label>
                         <div class="input-icon">
                             <i class="fas fa-at"></i>
-                            <input type="text" id="username" name="username" required>
+                            <input type="text" id="username" name="username" required autocomplete="username">
                         </div>
                     </div>
                     
@@ -296,7 +124,7 @@ if (isset($_SESSION['flash_message'])) {
                         <label for="email">Email</label>
                         <div class="input-icon">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="email" required autocomplete="email">
                         </div>
                     </div>
                     
@@ -304,16 +132,16 @@ if (isset($_SESSION['flash_message'])) {
                         <label for="password">Mot de passe</label>
                         <div class="input-icon">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" required>
+                            <input type="password" id="password" name="password" required autocomplete="new-password">
                         </div>
-                        <small style="color: #666; font-size: 12px;">Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre</small>
+                        <small class="password-hint">Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre</small>
                     </div>
                     
                     <div class="form-group">
                         <label for="confirm_password">Confirmer le mot de passe</label>
                         <div class="input-icon">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="confirm_password" name="confirm_password" required>
+                            <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password">
                         </div>
                     </div>
                     
@@ -323,55 +151,147 @@ if (isset($_SESSION['flash_message'])) {
                 </form>
                 
                 <div class="switch-form">
-                    <p>Déjà un compte ? <a href="#" onclick="switchToLogin()">Se connecter</a></p>
+                    <p>Déjà un compte ? <a href="#" onclick="switchToLogin(); return false;">Se connecter</a></p>
                 </div>
             </div>
-        </div>
-
-        <div class="auth-side">
-            <div class="side-content">
-                <div class="logo">
-                    <i class="fas fa-code"></i>
-                    HEPL Tech Lab
+            
+            <!-- Section Activation -->
+            <?php if (isset($_GET['show_activation']) && isset($_SESSION['activation_user_id'])): ?>
+            <div class="auth-form" id="activation-form" style="display: block;">
+                <h1>Activation du compte</h1>
+                <p class="form-subtitle">Un email d'activation a été envoyé</p>
+                
+                <?php if ($message): ?>
+                    <div class="alert alert-<?php echo $messageType === 'success' ? 'success' : 'error'; ?>">
+                        <?php echo $message; ?>
+                    </div>
+                <?php endif; ?>
+                
+                <div class="simple-message">
+                    <p>Veuillez vérifier votre email <strong><?php echo $_SESSION['activation_email']; ?></strong> et cliquer sur le lien d'activation pour activer votre compte.</p>
                 </div>
-                <h2>Bienvenue !</h2>
-                <p>Rejoignez notre communauté d'étudiants passionnés de technologie. Développez vos compétences, travaillez sur des projets innovants et connectez-vous avec d'autres développeurs.</p>
+                
+            <div style="text-align: center; margin: 20px 0;">
+                <button onclick="sendActivationEmail()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                    Envoyer l'email d'activation
+                </button>
             </div>
+                
+                <div class="switch-form">
+                    <p><a href="index.php?page=login">Retour à la connexion</a></p>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <script src="views/assets/js/login.js"></script>
+
     <script>
-        function switchToRegister() {
-            document.getElementById('loginForm').classList.remove('active');
-            document.getElementById('registerForm').classList.add('active');
-        }
-
-        function switchToLogin() {
-            document.getElementById('registerForm').classList.remove('active');
-            document.getElementById('loginForm').classList.add('active');
-        }
-
-        // Validation du mot de passe en temps réel
-        document.getElementById('password').addEventListener('input', function() {
-            const password = this.value;
-            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-            if (regex.test(password)) {
-                this.style.borderColor = '#28a745';
-            } else {
-                this.style.borderColor = '#dc3545';
-            }
+        // Initialiser EmailJS
+        (function() {
+            emailjs.init("6WNepAHVTUsPccRF3");
+            console.log('EmailJS initialisé');
+        })();
+        
+        // Vérifier si EmailJS est disponible
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM chargé');
+            console.log('EmailJS disponible:', typeof emailjs !== 'undefined');
         });
-
-        // Validation de la confirmation du mot de passe
-        document.getElementById('confirm_password').addEventListener('input', function() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = this.value;
-            if (password === confirmPassword && password.length > 0) {
-                this.style.borderColor = '#28a745';
-            } else {
-                this.style.borderColor = '#dc3545';
+        
+        // Variables d'activation
+        const activationData = {
+            userId: '<?php echo $_SESSION['activation_user_id'] ?? ''; ?>',
+            token: '<?php echo $_SESSION['activation_token'] ?? ''; ?>',
+            email: '<?php echo $_SESSION['activation_email'] ?? ''; ?>',
+            firstName: '<?php echo $_SESSION['activation_first_name'] ?? ''; ?>'
+        };
+        
+        // Debug: Afficher les données d'activation
+        console.log('Données d\'activation:', activationData);
+        console.log('Page chargée, données disponibles:', activationData.email ? 'OUI' : 'NON');
+        
+        // Fonction pour envoyer l'email d'activation
+        function sendActivationEmail() {
+            if (!activationData.token) {
+                console.log('Données d\'activation manquantes');
+                return;
             }
+            
+            // Vérifier que EmailJS est initialisé
+            if (typeof emailjs === 'undefined') {
+                console.error('EmailJS n\'est pas initialisé');
+                return;
+            }
+            
+            const activationLink = `${window.location.origin}/dashboard/index.php?page=activate&token=${activationData.token}`;
+            
+            const templateParams = {
+                to_email: activationData.email,
+                to_name: activationData.firstName,
+                activation_link: activationLink,
+                site_name: 'HEPL Tech Lab'
+            };
+            
+            // Debug: Afficher les paramètres envoyés
+            console.log('Paramètres EmailJS:', templateParams);
+            console.log('Lien d\'activation:', activationLink);
+            console.log('Service ID:', 'service_dobtwbv');
+            console.log('Template ID:', 'template_pumi06p');
+            
+            // Vérifier que tous les paramètres requis sont présents
+            if (!templateParams.to_email || !templateParams.to_name || !templateParams.activation_link) {
+                console.error('Paramètres manquants pour l\'envoi d\'email');
+                return;
+            }
+            
+            emailjs.send('service_dobtwbv', 'template_pumi06p', templateParams)
+                .then(function(response) {
+                    console.log('Email d\'activation envoyé avec succès !');
+                    console.log('Réponse EmailJS:', response);
+                    console.log('Status:', response.status);
+                    console.log('Text:', response.text);
+                }, function(error) {
+                    console.error('Erreur envoi email:', error);
+                    console.error('Status:', error.status);
+                    console.error('Text:', error.text);
+                    console.error('Details:', error);
+                    
+                    // Afficher un message d'erreur plus détaillé
+                    if (error.status === 412) {
+                        console.error('Erreur 412: Vérifiez la configuration EmailJS (Service ID, Template ID, paramètres)');
+                    } else if (error.status === 400) {
+                        console.error('Erreur 400: Paramètres invalides');
+                    } else if (error.status === 401) {
+                        console.error('Erreur 401: Clé publique invalide');
+                    }
+                });
+        }
+        
+        
+        // Envoyer automatiquement l'email d'activation si on est sur la page d'activation
+        <?php if (isset($_GET['show_activation']) && isset($_SESSION['activation_user_id'])): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Envoyer l'email automatiquement
+            setTimeout(sendActivationEmail, 1000);
+            
+            // Nettoyer les données de session après l'envoi
+            setTimeout(function() {
+                // Faire une requête pour nettoyer la session
+                fetch('index.php?page=login&clean_activation=1', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=clean_activation'
+                });
+            }, 2000);
         });
+        <?php endif; ?>
     </script>
 </body>
 </html>

@@ -1,63 +1,53 @@
 <?php
-session_start();
-header('Content-Type: application/json');
+/**
+ * Action de gestion des paramètres
+ */
 
-require_once __DIR__ . '/../DAO/SettingsDAO.php';
-
-$settingsDAO = new SettingsDAO();
-$settingsDAO->createSettingsTable();
-
-$action = $_POST['action'] ?? $_GET['action'] ?? '';
-$response = ['success' => false, 'message' => 'Action inconnue'];
-
-function isAdmin() {
-    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-try {
+require_once __DIR__ . '/../DAO/UserDAO.php';
+
+// Vérifier que l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    header('Location: index.php?page=login');
+    exit();
+}
+
+$userDAO = new UserDAO();
+
+// Traiter les actions POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
+
     switch ($action) {
-        case 'get_settings':
-            if (!isAdmin()) {
-                $response = ['success' => false, 'message' => 'Permissions insuffisantes'];
-                break;
-            }
-            $settings = $settingsDAO->getAllSettings();
-            $response = ['success' => true, 'data' => $settings];
-            break;
-
-        case 'update_settings':
-            if (!isAdmin()) {
-                $response = ['success' => false, 'message' => 'Permissions insuffisantes'];
-                break;
-            }
-            $allowedKeys = [
-                'discord_link',
-                'contact_email',
-                'club_charter_url',
-                'projects_default_visibility',
-                'tasks_default_priority',
-                'tasks_allow_multi_assign'
-            ];
-
-            $incoming = [];
-            foreach ($allowedKeys as $key) {
-                if (isset($_POST[$key])) {
-                    $incoming[$key] = trim((string)$_POST[$key]);
-                }
-            }
-
-            if ($settingsDAO->setSettings($incoming)) {
-                $response = ['success' => true, 'message' => 'Paramètres mis à jour'];
+        case 'update_theme':
+            $theme = $_POST['theme'] ?? '';
+            if (in_array($theme, ['light', 'dark'])) {
+                $result = $userDAO->updateUserTheme($_SESSION['user_id'], $theme);
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'error';
             } else {
-                $response = ['success' => false, 'message' => 'Erreur lors de la mise à jour'];
+                $_SESSION['flash_message'] = 'Thème invalide.';
+                $_SESSION['flash_type'] = 'error';
             }
             break;
 
-        default:
-            $response = ['success' => false, 'message' => 'Action non supportée'];
+
     }
-} catch (Throwable $e) {
-    $response = ['success' => false, 'message' => 'Erreur: ' . $e->getMessage()];
+
+    header('Location: index.php?page=settings');
+    exit();
 }
 
-echo json_encode($response);
+// Récupérer les données
+try {
+    $user = $userDAO->getUserById($_SESSION['user_id']);
+    $currentTheme = $user['theme_preference'] ?? 'light';
+} catch (Exception $e) {
+    error_log("Erreur settings : " . $e->getMessage());
+    $user = null;
+    $currentTheme = 'light';
+}
+?>

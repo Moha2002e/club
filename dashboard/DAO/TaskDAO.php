@@ -1,372 +1,345 @@
 <?php
-require_once 'Database.php';
+require_once __DIR__ . '/Database.php';
 
 class TaskDAO {
-    private $db;
+    private $pdo;
 
     public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+        $this->pdo = Database::getInstance()->getConnection();
     }
 
-    /**
-     * Créer la table tasks si elle n'existe pas
-     */
-    public function createTasksTable() {
-        $sql = "CREATE TABLE IF NOT EXISTS tasks (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            title VARCHAR(200) NOT NULL,
-            description TEXT,
-            status ENUM('pending', 'in_progress', 'completed', 'cancelled') DEFAULT 'pending',
-            priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium',
-            assigned_to INT,
-            created_by INT NOT NULL,
-            project_id INT NOT NULL,
-            due_date DATETIME,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            completed_at TIMESTAMP NULL,
-            FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-            INDEX idx_status (status),
-            INDEX idx_priority (priority),
-            INDEX idx_assigned_to (assigned_to),
-            INDEX idx_created_by (created_by),
-            INDEX idx_due_date (due_date),
-            INDEX idx_project_id (project_id)
-        )";
+    // Récupérer toutes les tâches (pour admin)
+    public function getAllTasks() {
+        $sql = "SELECT DISTINCT t.*, p.title as project_title 
+                FROM tasks t
+                INNER JOIN projects p ON t.project_id = p.id
+                ORDER BY 
+                    CASE t.priority
+                        WHEN 'urgent' THEN 1
+                        WHEN 'high' THEN 2
+                        WHEN 'medium' THEN 3
+                        WHEN 'low' THEN 4
+                    END,
+                    t.due_date ASC";
         
-        try {
-            $this->db->exec($sql);
-            
-            // Créer la table des assignations multiples
-            $sqlAssignments = "CREATE TABLE IF NOT EXISTS task_assignments (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                task_id INT NOT NULL,
-                user_id INT NOT NULL,
-                assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                UNIQUE KEY unique_task_user (task_id, user_id),
-                INDEX idx_task_id (task_id),
-                INDEX idx_user_id (user_id)
-            )";
-            
-            $this->db->exec($sqlAssignments);
-            return true;
-        } catch(PDOException $e) {
-            return false;
-        }
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
-    /**
-     * Créer une nouvelle tâche
-     */
-    public function createTask($title, $description, $priority, $assignedTo, $projectId, $dueDate, $createdBy, $assignedUsers = []) {
-        // Valider les données
-        if (empty($title)) {
-            return ['success' => false, 'message' => 'Le titre est obligatoire.'];
+    // Récupérer toutes les tâches avec filtres (pour admin)
+    public function getAllTasksWithFilters($status = '', $priority = '', $project = '', $creator = '') {
+        $conditions = [];
+        $params = [];
+        
+        if (!empty($status)) {
+            $conditions[] = "t.status = :status";
+            $params[':status'] = $status;
         }
-
-        if (!in_array($priority, ['low', 'medium', 'high', 'urgent'])) {
-            return ['success' => false, 'message' => 'Priorité invalide.'];
+        
+        if (!empty($priority)) {
+            $conditions[] = "t.priority = :priority";
+            $params[':priority'] = $priority;
         }
-
-        if (empty($projectId)) {
-            return ['success' => false, 'message' => 'Le projet est obligatoire.'];
+        
+        if (!empty($project)) {
+            $conditions[] = "t.project_id = :project_id";
+            $params[':project_id'] = $project;
         }
+        
+        if (!empty($creator)) {
+            $conditions[] = "t.created_by = :created_by";
+            $params[':created_by'] = $creator;
+        }
+        
+        $sql = "SELECT DISTINCT t.*, p.title as project_title 
+                FROM tasks t
+                INNER JOIN projects p ON t.project_id = p.id";
+        
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(' AND ', $conditions);
+        }
+        
+        $sql .= " ORDER BY 
+                    CASE t.priority
+                        WHEN 'urgent' THEN 1
+                        WHEN 'high' THEN 2
+                        WHEN 'medium' THEN 3
+                        WHEN 'low' THEN 4
+                    END,
+                    t.due_date ASC";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
 
+    // Récupérer les tâches assignées à un utilisateur avec filtres
+    public function getTasksByUserIdWithFilters($userId, $status = '', $priority = '', $project = '', $creator = '', $limit = 5) {
+        $conditions = ["ta.user_id = :user_id"];
+        $params = [':user_id' => $userId];
+        
+        if (!empty($status)) {
+            $conditions[] = "t.status = :status";
+            $params[':status'] = $status;
+        }
+        
+        if (!empty($priority)) {
+            $conditions[] = "t.priority = :priority";
+            $params[':priority'] = $priority;
+        }
+        
+        if (!empty($project)) {
+            $conditions[] = "t.project_id = :project_id";
+            $params[':project_id'] = $project;
+        }
+        
+        if (!empty($creator)) {
+            $conditions[] = "t.created_by = :created_by";
+            $params[':created_by'] = $creator;
+        }
+        
+        $sql = "SELECT DISTINCT t.*, p.title as project_title 
+                FROM tasks t
+                INNER JOIN task_assignments ta ON t.id = ta.task_id
+                INNER JOIN projects p ON t.project_id = p.id
+                WHERE " . implode(' AND ', $conditions) . "
+                ORDER BY 
+                    CASE t.priority
+                        WHEN 'urgent' THEN 1
+                        WHEN 'high' THEN 2
+                        WHEN 'medium' THEN 3
+                        WHEN 'low' THEN 4
+                    END,
+                    t.due_date ASC
+                LIMIT :limit";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    // Récupérer les tâches des projets dont l'utilisateur est membre avec filtres
+    public function getTasksByUserProjectsWithFilters($userId, $status = '', $priority = '', $project = '', $creator = '') {
+        $conditions = ["pm.user_id = :user_id"];
+        $params = [':user_id' => $userId];
+        
+        if (!empty($status)) {
+            $conditions[] = "t.status = :status";
+            $params[':status'] = $status;
+        }
+        
+        if (!empty($priority)) {
+            $conditions[] = "t.priority = :priority";
+            $params[':priority'] = $priority;
+        }
+        
+        if (!empty($project)) {
+            $conditions[] = "t.project_id = :project_id";
+            $params[':project_id'] = $project;
+        }
+        
+        if (!empty($creator)) {
+            $conditions[] = "t.created_by = :created_by";
+            $params[':created_by'] = $creator;
+        }
+        
+        $sql = "SELECT DISTINCT t.*, p.title as project_title 
+                FROM tasks t
+                INNER JOIN projects p ON t.project_id = p.id
+                INNER JOIN project_members pm ON p.id = pm.project_id
+                WHERE " . implode(' AND ', $conditions) . "
+                ORDER BY 
+                    CASE t.priority
+                        WHEN 'urgent' THEN 1
+                        WHEN 'high' THEN 2
+                        WHEN 'medium' THEN 3
+                        WHEN 'low' THEN 4
+                    END,
+                    t.due_date ASC";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    // Récupérer les tâches assignées à un utilisateur
+    public function getTasksByUserId($userId, $limit = 5) {
+        $sql = "SELECT DISTINCT t.*, p.title as project_title 
+                FROM tasks t
+                INNER JOIN task_assignments ta ON t.id = ta.task_id
+                INNER JOIN projects p ON t.project_id = p.id
+                WHERE ta.user_id = :user_id 
+                AND t.status != 'completed'
+                ORDER BY 
+                    CASE t.priority
+                        WHEN 'urgent' THEN 1
+                        WHEN 'high' THEN 2
+                        WHEN 'medium' THEN 3
+                        WHEN 'low' THEN 4
+                    END,
+                    t.due_date ASC
+                LIMIT :limit";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    // Compter les tâches non terminées d'un utilisateur
+    public function countPendingTasksByUserId($userId) {
+        $sql = "SELECT COUNT(*) as count 
+                FROM tasks t
+                INNER JOIN task_assignments ta ON t.id = ta.task_id
+                WHERE ta.user_id = :user_id 
+                AND t.status != 'completed'";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return $result['count'];
+    }
+
+    // Créer une nouvelle tâche
+    public function createTask($data) {
         try {
-            $this->db->beginTransaction();
+            $sql = "INSERT INTO tasks (title, description, project_id, priority, status, due_date, created_by) 
+                    VALUES (:title, :description, :project_id, :priority, :status, :due_date, :created_by)";
             
-            $sql = "INSERT INTO tasks (title, description, priority, assigned_to, project_id, due_date, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$title, $description, $priority, $assignedTo, $projectId, $dueDate, $createdBy]);
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([
+                ':title' => $data['title'],
+                ':description' => $data['description'],
+                ':project_id' => $data['project_id'],
+                ':priority' => $data['priority'],
+                ':status' => $data['status'],
+                ':due_date' => $data['due_date'],
+                ':created_by' => $data['created_by']
+            ]);
             
             if ($result) {
-                $taskId = $this->db->lastInsertId();
-                
-                // Ajouter les assignations multiples
-                if (!empty($assignedUsers)) {
-                    $assignSql = "INSERT INTO task_assignments (task_id, user_id) VALUES (?, ?)";
-                    $assignStmt = $this->db->prepare($assignSql);
-                    
-                    foreach ($assignedUsers as $userId) {
-                        $assignStmt->execute([$taskId, $userId]);
-                    }
-                }
-                
-                $this->db->commit();
-                return ['success' => true, 'message' => 'Tâche créée avec succès!', 'task_id' => $taskId];
-            } else {
-                $this->db->rollBack();
-                return ['success' => false, 'message' => 'Erreur lors de la création de la tâche.'];
+                return $this->pdo->lastInsertId();
             }
-        } catch(PDOException $e) {
-            $this->db->rollBack();
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
+            return false;
+        } catch (PDOException $e) {
+            error_log("Erreur SQL createTask : " . $e->getMessage());
+            throw $e;
         }
     }
 
-    /**
-     * Obtenir toutes les tâches avec les informations des utilisateurs
-     */
-    public function getAllTasks() {
-        $sql = "SELECT t.*, 
-                       u1.first_name as assigned_first_name, 
-                       u1.last_name as assigned_last_name,
-                       u2.first_name as created_first_name, 
-                       u2.last_name as created_last_name,
-                       p.title as project_title
-                FROM tasks t
-                LEFT JOIN users u1 ON t.assigned_to = u1.id
-                LEFT JOIN users u2 ON t.created_by = u2.id
-                LEFT JOIN projects p ON t.project_id = p.id
-                ORDER BY t.created_at DESC";
-        
+    // Assigner une tâche à un utilisateur
+    public function assignTaskToUser($taskId, $userId) {
         try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            $tasks = $stmt->fetchAll();
+            $sql = "INSERT INTO task_assignments (task_id, user_id) 
+                    VALUES (:task_id, :user_id)
+                    ON DUPLICATE KEY UPDATE assigned_at = CURRENT_TIMESTAMP";
             
-            // Ajouter les assignations multiples pour chaque tâche
-            foreach ($tasks as &$task) {
-                $assignSql = "SELECT u.id, u.first_name, u.last_name, u.username 
-                             FROM task_assignments ta 
-                             JOIN users u ON ta.user_id = u.id 
-                             WHERE ta.task_id = ?";
-                $assignStmt = $this->db->prepare($assignSql);
-                $assignStmt->execute([$task['id']]);
-                $task['assignees'] = $assignStmt->fetchAll();
-            }
-            
-            return $tasks;
-        } catch(PDOException $e) {
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([
+                ':task_id' => $taskId,
+                ':user_id' => $userId
+            ]);
+        } catch (PDOException $e) {
+            error_log("Erreur SQL assignTaskToUser : " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Obtenir les tâches d'un utilisateur spécifique
-     */
-    public function getTasksByUser($userId) {
-        $sql = "SELECT t.*, 
-                       u1.first_name as assigned_first_name, 
-                       u1.last_name as assigned_last_name,
-                       u2.first_name as created_first_name, 
-                       u2.last_name as created_last_name,
-                       p.title as project_title
-                FROM tasks t
-                LEFT JOIN users u1 ON t.assigned_to = u1.id
-                LEFT JOIN users u2 ON t.created_by = u2.id
-                LEFT JOIN projects p ON t.project_id = p.id
-                WHERE t.assigned_to = ? OR t.created_by = ?
-                ORDER BY t.created_at DESC";
-        
+    // Retirer une assignation de tâche
+    public function unassignTaskFromUser($taskId, $userId) {
         try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId, $userId]);
-            return $stmt->fetchAll();
-        } catch(PDOException $e) {
+            $sql = "DELETE FROM task_assignments WHERE task_id = :task_id AND user_id = :user_id";
+            
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([
+                ':task_id' => $taskId,
+                ':user_id' => $userId
+            ]);
+        } catch (PDOException $e) {
+            error_log("Erreur SQL unassignTaskFromUser : " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Obtenir une tâche par ID
-     */
+    // Récupérer une tâche par son ID
     public function getTaskById($taskId) {
-        $sql = "SELECT t.*, 
-                       u1.first_name as assigned_first_name, 
-                       u1.last_name as assigned_last_name,
-                       u2.first_name as created_first_name, 
-                       u2.last_name as created_last_name,
-                       p.title as project_title
+        $sql = "SELECT t.*, p.title as project_title 
                 FROM tasks t
-                LEFT JOIN users u1 ON t.assigned_to = u1.id
-                LEFT JOIN users u2 ON t.created_by = u2.id
-                LEFT JOIN projects p ON t.project_id = p.id
-                WHERE t.id = ?";
+                INNER JOIN projects p ON t.project_id = p.id
+                WHERE t.id = :task_id";
         
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$taskId]);
-            return $stmt->fetch();
-        } catch(PDOException $e) {
-            return false;
-        }
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':task_id', $taskId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch();
     }
 
-    /**
-     * Mettre à jour une tâche
-     */
-    public function updateTask($taskId, $title, $description, $status, $priority, $assignedTo, $projectId, $dueDate) {
-        // Valider les données
-        if (empty($title)) {
-            return ['success' => false, 'message' => 'Le titre est obligatoire.'];
-        }
-
-        if (!in_array($status, ['pending', 'in_progress', 'completed', 'cancelled'])) {
-            return ['success' => false, 'message' => 'Statut invalide.'];
-        }
-
-        if (!in_array($priority, ['low', 'medium', 'high', 'urgent'])) {
-            return ['success' => false, 'message' => 'Priorité invalide.'];
-        }
-
-        // Si la tâche est marquée comme terminée, ajouter la date de completion
-        $completedAt = ($status === 'completed') ? 'CURRENT_TIMESTAMP' : 'NULL';
+    // Récupérer les utilisateurs assignés à une tâche
+    public function getTaskAssignees($taskId) {
+        $sql = "SELECT u.* FROM users u
+                INNER JOIN task_assignments ta ON u.id = ta.user_id
+                WHERE ta.task_id = :task_id
+                ORDER BY u.first_name, u.last_name";
         
-        $sql = "UPDATE tasks SET 
-                    title = ?, 
-                    description = ?, 
-                    status = ?, 
-                    priority = ?, 
-                    assigned_to = ?, 
-                    project_id = ?, 
-                    due_date = ?,
-                    completed_at = $completedAt,
-                    updated_at = CURRENT_TIMESTAMP 
-                WHERE id = ?";
-        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':task_id' => $taskId]);
+        return $stmt->fetchAll();
+    }
+
+    // Mettre à jour une tâche
+    public function updateTask($taskId, $data) {
         try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$title, $description, $status, $priority, $assignedTo, $projectId, $dueDate, $taskId]);
+            $sql = "UPDATE tasks SET 
+                    title = :title,
+                    description = :description,
+                    priority = :priority,
+                    status = :status,
+                    due_date = :due_date
+                    WHERE id = :task_id";
             
-            if ($result && $stmt->rowCount() > 0) {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':task_id', $taskId, PDO::PARAM_INT);
+            $stmt->bindValue(':title', $data['title'], PDO::PARAM_STR);
+            $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
+            $stmt->bindValue(':priority', $data['priority'], PDO::PARAM_STR);
+            $stmt->bindValue(':status', $data['status'], PDO::PARAM_STR);
+            $stmt->bindValue(':due_date', $data['due_date'] ?: null, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() > 0) {
                 return ['success' => true, 'message' => 'Tâche mise à jour avec succès.'];
             } else {
-                return ['success' => false, 'message' => 'Tâche non trouvée.'];
+                return ['success' => false, 'message' => 'Aucune modification effectuée.'];
             }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
+        } catch (PDOException $e) {
+            error_log("Erreur updateTask : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la mise à jour de la tâche.'];
         }
     }
 
-    /**
-     * Supprimer une tâche
-     */
+    // Supprimer une tâche
     public function deleteTask($taskId) {
-        $sql = "DELETE FROM tasks WHERE id = ?";
-        
         try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$taskId]);
+            $sql = "DELETE FROM tasks WHERE id = :task_id";
             
-            if ($result && $stmt->rowCount() > 0) {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':task_id', $taskId, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() > 0) {
                 return ['success' => true, 'message' => 'Tâche supprimée avec succès.'];
             } else {
-                return ['success' => false, 'message' => 'Tâche non trouvée.'];
+                return ['success' => false, 'message' => 'Tâche introuvable.'];
             }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Changer le statut d'une tâche
-     */
-    public function updateTaskStatus($taskId, $status) {
-        if (!in_array($status, ['pending', 'in_progress', 'completed', 'cancelled'])) {
-            return ['success' => false, 'message' => 'Statut invalide.'];
-        }
-
-        $completedAt = ($status === 'completed') ? 'CURRENT_TIMESTAMP' : 'NULL';
-        
-        $sql = "UPDATE tasks SET 
-                    status = ?, 
-                    completed_at = $completedAt,
-                    updated_at = CURRENT_TIMESTAMP 
-                WHERE id = ?";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$status, $taskId]);
-            
-            if ($result && $stmt->rowCount() > 0) {
-                return ['success' => true, 'message' => 'Statut mis à jour avec succès.'];
-            } else {
-                return ['success' => false, 'message' => 'Tâche non trouvée.'];
-            }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Obtenir les statistiques des tâches
-     */
-    public function getTasksStats() {
-        $sql = "SELECT 
-                    COUNT(*) as total_tasks,
-                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_tasks,
-                    SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress_tasks,
-                    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_tasks,
-                    SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled_tasks,
-                    SUM(CASE WHEN priority = 'urgent' THEN 1 ELSE 0 END) as urgent_tasks,
-                    SUM(CASE WHEN due_date < NOW() AND status != 'completed' THEN 1 ELSE 0 END) as overdue_tasks
-                FROM tasks";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetch();
-        } catch(PDOException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Obtenir les tâches en retard
-     */
-    public function getOverdueTasks() {
-        $sql = "SELECT t.*, 
-                       u1.first_name as assigned_first_name, 
-                       u1.last_name as assigned_last_name,
-                       u2.first_name as created_first_name, 
-                       u2.last_name as created_last_name,
-                       p.title as project_title
-                FROM tasks t
-                LEFT JOIN users u1 ON t.assigned_to = u1.id
-                LEFT JOIN users u2 ON t.created_by = u2.id
-                LEFT JOIN projects p ON t.project_id = p.id
-                WHERE t.due_date < NOW() AND t.status != 'completed' AND t.status != 'cancelled'
-                ORDER BY t.due_date ASC";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch(PDOException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Obtenir les tâches à venir (prochaines 7 jours)
-     */
-    public function getUpcomingTasks() {
-        $sql = "SELECT t.*, 
-                       u1.first_name as assigned_first_name, 
-                       u1.last_name as assigned_last_name,
-                       u2.first_name as created_first_name, 
-                       u2.last_name as created_last_name,
-                       p.title as project_title
-                FROM tasks t
-                LEFT JOIN users u1 ON t.assigned_to = u1.id
-                LEFT JOIN users u2 ON t.created_by = u2.id
-                LEFT JOIN projects p ON t.project_id = p.id
-                WHERE t.due_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 7 DAY) 
-                AND t.status != 'completed' AND t.status != 'cancelled'
-                ORDER BY t.due_date ASC";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch(PDOException $e) {
-            return false;
+        } catch (PDOException $e) {
+            error_log("Erreur suppression tâche : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la suppression de la tâche.'];
         }
     }
 }
 ?>
+

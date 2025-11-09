@@ -1,386 +1,529 @@
 <?php
-require_once 'Database.php';
+require_once __DIR__ . '/Database.php';
 
 class UserDAO {
-    private $db;
+    private $pdo;
 
     public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+        $this->pdo = Database::getInstance()->getConnection();
     }
 
     /**
-     * Créer la table users si elle n'existe pas
-     */
-    public function createUsersTable() {
-        $sql = "CREATE TABLE IF NOT EXISTS users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(50) UNIQUE NOT NULL,
-            email VARCHAR(100) UNIQUE NOT NULL,
-            password VARCHAR(255) NOT NULL,
-            first_name VARCHAR(50) NOT NULL,
-            last_name VARCHAR(50) NOT NULL,
-            role ENUM('student', 'admin') DEFAULT 'student',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            is_active BOOLEAN DEFAULT TRUE
-        )";
-        
-        try {
-            $this->db->exec($sql);
-            return true;
-        } catch(PDOException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Inscription d'un nouvel utilisateur
-     */
-    public function register($username, $email, $password, $firstName, $lastName) {
-        // Vérifier si l'utilisateur existe déjà
-        if ($this->userExists($username, $email)) {
-            return ['success' => false, 'message' => 'Un utilisateur avec ce nom d\'utilisateur ou cet email existe déjà.'];
-        }
-
-        // Hasher le mot de passe
-        $hashedPassword = password_hash($password . SALT, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO users (username, email, password, first_name, last_name) VALUES (?, ?, ?, ?, ?)";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$username, $email, $hashedPassword, $firstName, $lastName]);
-            
-            if ($result) {
-                return ['success' => true, 'message' => 'Inscription réussie!', 'user_id' => $this->db->lastInsertId()];
-            } else {
-                return ['success' => false, 'message' => 'Erreur lors de l\'inscription.'];
-            }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Connexion d'un utilisateur
-     */
-    public function login($username, $password) {
-        $sql = "SELECT * FROM users WHERE (username = ? OR email = ?) AND is_active = TRUE";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$username, $username]);
-            $user = $stmt->fetch();
-            
-            if ($user && password_verify($password . SALT, $user['password'])) {
-                // Enlever le mot de passe des données retournées
-                unset($user['password']);
-                return ['success' => true, 'message' => 'Connexion réussie!', 'user' => $user];
-            } else {
-                return ['success' => false, 'message' => 'Nom d\'utilisateur/email ou mot de passe incorrect.'];
-            }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Vérifier si un utilisateur existe
-     */
-    private function userExists($username, $email) {
-        $sql = "SELECT id FROM users WHERE username = ? OR email = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$username, $email]);
-        return $stmt->fetch() !== false;
-    }
-
-    /**
-     * Obtenir un utilisateur par ID
-     */
-    public function getUserById($id) {
-        $sql = "SELECT id, username, email, first_name, last_name, role, created_at FROM users WHERE id = ? AND is_active = TRUE";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$id]);
-        return $stmt->fetch();
-    }
-
-    /**
-     * Valider l'email
+     * Valider un email
      */
     public function isValidEmail($email) {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
     /**
-     * Valider le mot de passe
+     * Valider un mot de passe
+     * Min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
      */
     public function isValidPassword($password) {
-        // Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
-        return strlen($password) >= 8 && 
-               preg_match('/[A-Z]/', $password) && 
-               preg_match('/[a-z]/', $password) && 
-               preg_match('/[0-9]/', $password);
+        return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $password);
     }
 
     /**
-     * Obtenir tous les utilisateurs (pour la gestion des membres)
+     * Vérifier si un username existe déjà
      */
-    public function getAllUsers() {
-        $sql = "SELECT id, username, email, first_name, last_name, role, is_active, created_at, updated_at 
-                FROM users 
-                ORDER BY created_at DESC";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch(PDOException $e) {
-            return false;
-        }
+    public function usernameExists($username) {
+        $sql = "SELECT COUNT(*) FROM users WHERE username = :username";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':username', $username, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
     }
 
     /**
-     * Mettre à jour le rôle d'un utilisateur
+     * Vérifier si un email existe déjà
      */
-    public function updateUserRole($userId, $newRole) {
-        // Vérifier que le rôle est valide
-        if (!in_array($newRole, ['student', 'admin'])) {
-            return ['success' => false, 'message' => 'Rôle invalide.'];
-        }
-
-        $sql = "UPDATE users SET role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$newRole, $userId]);
-            
-            if ($result && $stmt->rowCount() > 0) {
-                return ['success' => true, 'message' => 'Rôle mis à jour avec succès.'];
-            } else {
-                return ['success' => false, 'message' => 'Utilisateur non trouvé.'];
-            }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
-        }
+    public function emailExists($email) {
+        $sql = "SELECT COUNT(*) FROM users WHERE email = :email";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
     }
 
     /**
-     * Activer/Désactiver un compte utilisateur
+     * Inscription d'un nouvel utilisateur
      */
-    public function toggleUserStatus($userId) {
-        // D'abord récupérer le statut actuel
-        $sql = "SELECT is_active FROM users WHERE id = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$userId]);
-        $user = $stmt->fetch();
-        
-        if (!$user) {
-            return ['success' => false, 'message' => 'Utilisateur non trouvé.'];
-        }
-        
-        $newStatus = $user['is_active'] ? 0 : 1;
-        
-        $sql = "UPDATE users SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$newStatus, $userId]);
-            
-            if ($result && $stmt->rowCount() > 0) {
-                $action = $newStatus ? 'activé' : 'désactivé';
-                return ['success' => true, 'message' => "Compte $action avec succès."];
-            } else {
-                return ['success' => false, 'message' => 'Erreur lors de la mise à jour.'];
-            }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Obtenir les statistiques des membres
-     */
-    public function getMembersStats() {
-        $sql = "SELECT 
-                    COUNT(*) as total_members,
-                    SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_members,
-                    SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) as inactive_members,
-                    SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admin_count,
-                    SUM(CASE WHEN role = 'student' THEN 1 ELSE 0 END) as student_count
-                FROM users";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetch();
-        } catch(PDOException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Créer un nouveau membre (par un admin)
-     */
-    public function createMember($username, $email, $password, $firstName, $lastName, $role = 'student') {
-        // Vérifier si l'utilisateur existe déjà
-        if ($this->userExists($username, $email)) {
-            return ['success' => false, 'message' => 'Un utilisateur avec ce nom d\'utilisateur ou cet email existe déjà.'];
+    public function register($username, $email, $password, $firstName, $lastName) {
+        // Vérifier si le username existe
+        if ($this->usernameExists($username)) {
+            return ['success' => false, 'message' => 'Ce nom d\'utilisateur est déjà utilisé.'];
         }
 
-        // Valider le rôle
-        if (!in_array($role, ['student', 'admin'])) {
-            return ['success' => false, 'message' => 'Rôle invalide.'];
-        }
-
-        // Valider l'email
-        if (!$this->isValidEmail($email)) {
-            return ['success' => false, 'message' => 'Email invalide.'];
-        }
-
-        // Valider le mot de passe
-        if (!$this->isValidPassword($password)) {
-            return ['success' => false, 'message' => 'Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 minuscule et 1 chiffre.'];
+        // Vérifier si l'email existe
+        if ($this->emailExists($email)) {
+            return ['success' => false, 'message' => 'Cet email est déjà utilisé.'];
         }
 
         // Hasher le mot de passe
-        $hashedPassword = password_hash($password . SALT, PASSWORD_DEFAULT);
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        $sql = "INSERT INTO users (username, email, password, first_name, last_name, role, is_active) VALUES (?, ?, ?, ?, ?, ?, 1)";
+        // Générer un token d'activation unique
+        $activationToken = bin2hex(random_bytes(32));
+        $activationExpiresAt = date('Y-m-d H:i:s', strtotime('+24 hours')); // Expire dans 24 heures
+
+        error_log("Inscription - Token généré: $activationToken");
+        error_log("Inscription - Email: $email");
+        error_log("Inscription - Expires: $activationExpiresAt");
+
+        // Insérer l'utilisateur avec token d'activation
+        $sql = "INSERT INTO users (username, email, password, first_name, last_name, role, is_active, activation_token, otp_expires_at, is_verified) 
+                VALUES (:username, :email, :password, :first_name, :last_name, 'student', 0, :activation_token, :activation_expires_at, 0)";
         
         try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$username, $email, $hashedPassword, $firstName, $lastName, $role]);
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':username', $username, PDO::PARAM_STR);
+            $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+            $stmt->bindValue(':password', $hashedPassword, PDO::PARAM_STR);
+            $stmt->bindValue(':first_name', $firstName, PDO::PARAM_STR);
+            $stmt->bindValue(':last_name', $lastName, PDO::PARAM_STR);
+            $stmt->bindValue(':activation_token', $activationToken, PDO::PARAM_STR);
+            $stmt->bindValue(':activation_expires_at', $activationExpiresAt, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $userId = $this->pdo->lastInsertId();
+            
+            error_log("Inscription - Utilisateur créé avec ID: $userId");
+
+            return [
+                'success' => true, 
+                'message' => 'Inscription réussie ! Un email d\'activation a été envoyé.',
+                'user_id' => $userId,
+                'activation_token' => $activationToken,
+                'email' => $email,
+                'first_name' => $firstName
+            ];
+        } catch (PDOException $e) {
+            error_log("Erreur inscription : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de l\'inscription. Veuillez réessayer.'];
+        }
+    }
+
+    /**
+     * Connexion d'un utilisateur
+     */
+    public function login($usernameOrEmail, $password) {
+        // Rechercher par username ou email
+        $sql = "SELECT * FROM users 
+                WHERE (username = :identifier1 OR email = :identifier2) 
+                AND is_active = 1 
+                AND is_verified = 1 
+                LIMIT 1";
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':identifier1', $usernameOrEmail, PDO::PARAM_STR);
+            $stmt->bindValue(':identifier2', $usernameOrEmail, PDO::PARAM_STR);
+            $stmt->execute();
+            $user = $stmt->fetch();
+
+            // Debug
+            error_log("Login attempt for: " . $usernameOrEmail);
+            error_log("User found: " . ($user ? "YES (ID: " . $user['id'] . ")" : "NO"));
+
+            if (!$user) {
+                // Vérifier si l'utilisateur existe mais n'est pas vérifié
+                $unverifiedSql = "SELECT id, email, first_name FROM users 
+                                 WHERE (username = :identifier1 OR email = :identifier2) 
+                                 AND is_verified = 0 
+                                 LIMIT 1";
+                $unverifiedStmt = $this->pdo->prepare($unverifiedSql);
+                $unverifiedStmt->bindValue(':identifier1', $usernameOrEmail, PDO::PARAM_STR);
+                $unverifiedStmt->bindValue(':identifier2', $usernameOrEmail, PDO::PARAM_STR);
+                $unverifiedStmt->execute();
+                $unverifiedUser = $unverifiedStmt->fetch();
+                
+                if ($unverifiedUser) {
+                    return [
+                        'success' => false, 
+                        'message' => 'Votre compte n\'est pas encore vérifié. Veuillez vérifier votre email et entrer le code OTP.',
+                        'needs_verification' => true,
+                        'user_id' => $unverifiedUser['id']
+                    ];
+                }
+                
+                return ['success' => false, 'message' => 'Identifiants incorrects.'];
+            }
+
+            // Debug password
+            error_log("Password verify: " . (password_verify($password, $user['password']) ? "SUCCESS" : "FAILED"));
+
+            // Vérifier le mot de passe
+            if (password_verify($password, $user['password'])) {
+                // Mettre à jour la dernière connexion
+                $this->updateLastLogin($user['id']);
+
+                return [
+                    'success' => true, 
+                    'message' => 'Connexion réussie !',
+                    'user' => [
+                        'id' => $user['id'],
+                        'username' => $user['username'],
+                        'email' => $user['email'],
+                        'first_name' => $user['first_name'],
+                        'last_name' => $user['last_name'],
+                        'role' => $user['role']
+                    ]
+                ];
+            } else {
+                return ['success' => false, 'message' => 'Identifiants incorrects.'];
+            }
+        } catch (PDOException $e) {
+            error_log("Erreur connexion : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la connexion.'];
+        }
+    }
+
+    /**
+     * Mettre à jour la dernière connexion
+     */
+    private function updateLastLogin($userId) {
+        $sql = "UPDATE users SET updated_at = NOW() WHERE id = :id";
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Erreur update last login : " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Récupérer un utilisateur par ID
+     */
+    public function getUserById($userId) {
+        $sql = "SELECT id, username, email, first_name, last_name, role, theme_preference, created_at, is_active 
+                FROM users WHERE id = :id LIMIT 1";
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Erreur getUserById : " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function getUserByEmail($email) {
+        $sql = "SELECT id, username, email, first_name, last_name, role, theme_preference, created_at, is_active 
+                FROM users WHERE email = :email LIMIT 1";
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Erreur getUserByEmail : " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Vérifier le code OTP et activer le compte
+     */
+    public function verifyOTP($userId, $otpCode) {
+        $sql = "SELECT id, otp_code, otp_expires_at, is_verified 
+                FROM users 
+                WHERE id = :user_id AND otp_code = :otp_code AND is_verified = 0";
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->bindValue(':otp_code', $otpCode, PDO::PARAM_STR);
+            $stmt->execute();
+            $user = $stmt->fetch();
+
+            if (!$user) {
+                return ['success' => false, 'message' => 'Code OTP invalide ou compte déjà vérifié.'];
+            }
+
+            // Vérifier si le code n'a pas expiré
+            if (strtotime($user['otp_expires_at']) < time()) {
+                return ['success' => false, 'message' => 'Le code OTP a expiré. Veuillez demander un nouveau code.'];
+            }
+
+            // Activer le compte
+            $updateSql = "UPDATE users 
+                          SET is_verified = 1, is_active = 1, otp_code = NULL, otp_expires_at = NULL 
+                          WHERE id = :user_id";
+            
+            $updateStmt = $this->pdo->prepare($updateSql);
+            $updateStmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $updateStmt->execute();
+
+            return ['success' => true, 'message' => 'Compte activé avec succès ! Vous pouvez maintenant vous connecter.'];
+            
+        } catch (PDOException $e) {
+            error_log("Erreur verifyOTP : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la vérification. Veuillez réessayer.'];
+        }
+    }
+
+    /**
+     * Régénérer un code OTP
+     */
+    public function activateAccount($activationToken) {
+        error_log("activateAccount appelé avec token: " . $activationToken);
+        
+        $sql = "SELECT id, first_name, last_name, email, otp_expires_at, is_verified 
+                FROM users 
+                WHERE activation_token = :activation_token";
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':activation_token', $activationToken, PDO::PARAM_STR);
+            $stmt->execute();
+            $user = $stmt->fetch();
+
+            error_log("Utilisateur trouvé: " . json_encode($user));
+
+            if (!$user) {
+                error_log("Aucun utilisateur trouvé avec ce token");
+                return ['success' => false, 'message' => 'Token d\'activation invalide.'];
+            }
+
+            if ($user['is_verified'] == 1) {
+                error_log("Compte déjà vérifié");
+                return ['success' => false, 'message' => 'Compte déjà activé.'];
+            }
+
+            // Vérifier si le token n'a pas expiré
+            if ($user['otp_expires_at'] && strtotime($user['otp_expires_at']) < time()) {
+                error_log("Token expiré: " . $user['otp_expires_at']);
+                return ['success' => false, 'message' => 'Le lien d\'activation a expiré. Veuillez demander un nouveau lien.'];
+            }
+
+            // Activer le compte
+            $updateSql = "UPDATE users 
+                          SET is_verified = 1, is_active = 1, activation_token = NULL, otp_expires_at = NULL 
+                          WHERE id = :user_id";
+            
+            $updateStmt = $this->pdo->prepare($updateSql);
+            $updateStmt->bindValue(':user_id', $user['id'], PDO::PARAM_INT);
+            $result = $updateStmt->execute();
+            
+            error_log("Mise à jour effectuée: " . ($result ? 'OUI' : 'NON') . ", lignes affectées: " . $updateStmt->rowCount());
+
+            return [
+                'success' => true, 
+                'message' => 'Compte activé avec succès ! Vous pouvez maintenant vous connecter.',
+                'user' => $user
+            ];
+            
+        } catch (PDOException $e) {
+            error_log("Erreur activateAccount : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de l\'activation. Veuillez réessayer.'];
+        }
+    }
+    // Récupérer tous les membres avec filtres
+    public function getAllMembers($roleFilter = '', $projectFilter = '', $searchQuery = '', $statusFilter = '', $sortBy = 'name') {
+        $conditions = [];
+        $params = [];
+        
+        // Filtre par projet - utiliser une sous-requête pour éviter les doublons
+        if (!empty($projectFilter) && $projectFilter !== '') {
+            $conditions[] = "u.id IN (SELECT user_id FROM project_members WHERE project_id = :project_id)";
+            $params[':project_id'] = $projectFilter;
+        }
+        
+        // Filtre par rôle
+        if (!empty($roleFilter) && $roleFilter !== '') {
+            $conditions[] = "u.role = :role";
+            $params[':role'] = $roleFilter;
+        }
+        
+        // Filtre par statut
+        if (!empty($statusFilter) && $statusFilter !== '') {
+            if ($statusFilter === 'active') {
+                $conditions[] = "u.is_active = 1";
+            } elseif ($statusFilter === 'inactive') {
+                $conditions[] = "u.is_active = 0";
+            }
+        }
+        
+        // Recherche (insensible à la casse)
+        if (!empty($searchQuery) && $searchQuery !== '') {
+            $conditions[] = "(LOWER(u.first_name) LIKE :search OR LOWER(u.last_name) LIKE :search OR LOWER(u.email) LIKE :search OR LOWER(u.username) LIKE :search)";
+            $params[':search'] = "%" . strtolower($searchQuery) . "%";
+        }
+        
+        $sql = "SELECT u.id, u.username, u.email, u.first_name, u.last_name, u.role, u.created_at, u.is_active, YEAR(u.created_at) as joined_year 
+                FROM users u";
+        
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(' AND ', $conditions);
+        }
+        
+        // Tri
+        switch ($sortBy) {
+            case 'name':
+                $sql .= " ORDER BY u.first_name ASC, u.last_name ASC";
+                break;
+            case 'created':
+                $sql .= " ORDER BY u.created_at DESC";
+                break;
+            case 'role':
+                $sql .= " ORDER BY u.role ASC, u.first_name ASC";
+                break;
+            default:
+                $sql .= " ORDER BY u.first_name ASC, u.last_name ASC";
+        }
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    // Compter les projets d'un utilisateur
+    public function countUserProjects($userId) {
+        $sql = "SELECT COUNT(*) as count FROM project_members WHERE user_id = :user_id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':user_id' => $userId]);
+        $result = $stmt->fetch();
+        return $result['count'] ?? 0;
+    }
+
+    // Compter les tâches d'un utilisateur
+    public function countUserTasks($userId) {
+        $sql = "SELECT COUNT(*) as count FROM task_assignments WHERE user_id = :user_id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':user_id' => $userId]);
+        $result = $stmt->fetch();
+        return $result['count'] ?? 0;
+    }
+
+    // Activer/Désactiver un utilisateur
+    public function toggleUserStatus($userId) {
+        try {
+            $sql = "UPDATE users SET is_active = NOT is_active WHERE id = :user_id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':user_id' => $userId]);
+            
+            // Vérifier le nouveau statut
+            $sql = "SELECT is_active FROM users WHERE id = :user_id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':user_id' => $userId]);
+            $user = $stmt->fetch();
+            
+            $status = $user['is_active'] ? 'activé' : 'désactivé';
+            return ['success' => true, 'message' => "Compte $status avec succès."];
+        } catch (PDOException $e) {
+            error_log("Erreur toggle status : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la modification du statut.'];
+        }
+    }
+
+    // Supprimer un utilisateur
+    public function deleteUser($userId) {
+        try {
+            $sql = "DELETE FROM users WHERE id = :user_id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':user_id' => $userId]);
+            
+            if ($stmt->rowCount() > 0) {
+                return ['success' => true, 'message' => 'Utilisateur supprimé avec succès.'];
+            } else {
+                return ['success' => false, 'message' => 'Utilisateur introuvable.'];
+            }
+        } catch (PDOException $e) {
+            error_log("Erreur delete user : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la suppression.'];
+        }
+    }
+
+    // Mettre à jour un utilisateur (depuis son propre profil - sans modifier le rôle)
+    public function updateUser($userId, $data) {
+        try {
+            $sql = "UPDATE users SET 
+                    first_name = :first_name,
+                    last_name = :last_name,
+                    email = :email
+                    WHERE id = :user_id";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([
+                ':user_id' => $userId,
+                ':first_name' => $data['first_name'],
+                ':last_name' => $data['last_name'],
+                ':email' => $data['email']
+            ]);
             
             if ($result) {
-                return ['success' => true, 'message' => 'Membre créé avec succès!', 'user_id' => $this->db->lastInsertId()];
+                return ['success' => true, 'message' => 'Profil mis à jour avec succès.'];
             } else {
-                return ['success' => false, 'message' => 'Erreur lors de la création du membre.'];
+                return ['success' => false, 'message' => 'Erreur lors de la mise à jour.'];
             }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
+        } catch (PDOException $e) {
+            error_log("Erreur update user : " . $e->getMessage());
+            if ($e->getCode() == 23000) {
+                return ['success' => false, 'message' => 'Cet email est déjà utilisé.'];
+            }
+            return ['success' => false, 'message' => 'Erreur lors de la mise à jour.'];
         }
     }
 
-    /**
-     * Mettre à jour les informations d'un membre
-     */
-    public function updateMember($userId, $username, $email, $firstName, $lastName, $role) {
-        // Vérifier que le membre existe
-        $existingUser = $this->getUserById($userId);
-        if (!$existingUser) {
-            return ['success' => false, 'message' => 'Membre non trouvé.'];
-        }
-
-        // Vérifier si l'email ou username est déjà utilisé par un autre utilisateur
-        $sql = "SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$username, $email, $userId]);
-        if ($stmt->fetch()) {
-            return ['success' => false, 'message' => 'Ce nom d\'utilisateur ou cet email est déjà utilisé par un autre membre.'];
-        }
-
-        // Valider le rôle
-        if (!in_array($role, ['student', 'admin'])) {
-            return ['success' => false, 'message' => 'Rôle invalide.'];
-        }
-
-        // Valider l'email
-        if (!$this->isValidEmail($email)) {
-            return ['success' => false, 'message' => 'Email invalide.'];
-        }
-
-        $sql = "UPDATE users SET username = ?, email = ?, first_name = ?, last_name = ?, role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-        
+    // Mettre à jour un utilisateur par un admin (peut modifier le rôle)
+    public function updateUserByAdmin($userId, $data) {
         try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$username, $email, $firstName, $lastName, $role, $userId]);
+            $sql = "UPDATE users SET 
+                    first_name = :first_name,
+                    last_name = :last_name,
+                    email = :email,
+                    role = :role
+                    WHERE id = :user_id";
             
-            if ($result && $stmt->rowCount() > 0) {
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([
+                ':user_id' => $userId,
+                ':first_name' => $data['first_name'],
+                ':last_name' => $data['last_name'],
+                ':email' => $data['email'],
+                ':role' => $data['role']
+            ]);
+            
+            if ($result) {
                 return ['success' => true, 'message' => 'Membre mis à jour avec succès.'];
             } else {
-                return ['success' => false, 'message' => 'Aucune modification effectuée.'];
+                return ['success' => false, 'message' => 'Erreur lors de la mise à jour.'];
             }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
+        } catch (PDOException $e) {
+            error_log("Erreur update user by admin : " . $e->getMessage());
+            if ($e->getCode() == 23000) {
+                return ['success' => false, 'message' => 'Cet email est déjà utilisé.'];
+            }
+            return ['success' => false, 'message' => 'Erreur lors de la mise à jour.'];
         }
     }
 
     /**
-     * Supprimer un membre (soft delete - désactiver)
+     * Mettre à jour le thème de l'utilisateur
      */
-    public function deleteMember($userId) {
-        // Empêcher la suppression de son propre compte
-        if ($userId == $_SESSION['user_id']) {
-            return ['success' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.'];
-        }
-
-        $sql = "UPDATE users SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-        
+    public function updateUserTheme($userId, $theme) {
         try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$userId]);
+            $sql = "UPDATE users SET theme_preference = :theme WHERE id = :user_id";
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([
+                ':user_id' => $userId,
+                ':theme' => $theme
+            ]);
             
-            if ($result && $stmt->rowCount() > 0) {
-                return ['success' => true, 'message' => 'Membre supprimé avec succès.'];
+            if ($result) {
+                return ['success' => true, 'message' => 'Thème mis à jour avec succès.'];
             } else {
-                return ['success' => false, 'message' => 'Membre non trouvé.'];
+                return ['success' => false, 'message' => 'Erreur lors de la mise à jour du thème.'];
             }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Supprimer définitivement un membre (hard delete)
-     */
-    public function permanentlyDeleteMember($userId) {
-        // Empêcher la suppression de son propre compte
-        if ($userId == $_SESSION['user_id']) {
-            return ['success' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.'];
-        }
-
-        $sql = "DELETE FROM users WHERE id = ?";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$userId]);
-            
-            if ($result && $stmt->rowCount() > 0) {
-                return ['success' => true, 'message' => 'Membre supprimé définitivement.'];
-            } else {
-                return ['success' => false, 'message' => 'Membre non trouvé.'];
-            }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Réinitialiser le mot de passe d'un membre
-     */
-    public function resetMemberPassword($userId, $newPassword) {
-        // Valider le mot de passe
-        if (!$this->isValidPassword($newPassword)) {
-            return ['success' => false, 'message' => 'Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 minuscule et 1 chiffre.'];
-        }
-
-        // Hasher le nouveau mot de passe
-        $hashedPassword = password_hash($newPassword . SALT, PASSWORD_DEFAULT);
-
-        $sql = "UPDATE users SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-        
-        try {
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$hashedPassword, $userId]);
-            
-            if ($result && $stmt->rowCount() > 0) {
-                return ['success' => true, 'message' => 'Mot de passe réinitialisé avec succès.'];
-            } else {
-                return ['success' => false, 'message' => 'Membre non trouvé.'];
-            }
-        } catch(PDOException $e) {
-            return ['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()];
+        } catch (PDOException $e) {
+            error_log("Erreur updateUserTheme : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la mise à jour du thème.'];
         }
     }
 }
 ?>
+
