@@ -79,6 +79,9 @@ if (isset($_SESSION['flash_message'])) {
                 
                 <div class="switch-form">
                     <p>Pas encore de compte ? <a href="#" onclick="switchToRegister(); return false;">S'inscrire</a></p>
+                    <p><a href="index.php?page=forgot_password" style="color: #3B82F6; text-decoration: none; font-size: 0.9em;">
+                        <i class="fas fa-key"></i> Mot de passe oublié ?
+                    </a></p>
                 </div>
             </div>
 

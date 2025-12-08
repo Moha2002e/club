@@ -52,7 +52,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                 <i data-feather="settings" class="w-5 h-5"></i>
                 <span class="nav-text">Paramètres</span>
             </a>
-            <a href="index.php?page=logout" class="nav-item flex items-center space-x-3 p-3 rounded-lg text-red-600">
+            <a href="index.php?page=logout" class="nav-item logout-btn flex items-center space-x-3 p-3 rounded-lg bg-red-600 text-white">
                 <i data-feather="log-out" class="w-5 h-5"></i>
                 <span class="nav-text">Déconnexion</span>
             </a>

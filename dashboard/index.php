@@ -26,7 +26,7 @@ if ($page === 'activate') {
 }
 
 // Pages qui ne nécessitent pas d'authentification
-$publicPages = ['login', 'activate'];
+$publicPages = ['login', 'activate', 'forgot_password', 'reset_password'];
 
 // Vérifier l'authentification
 if (!in_array($page, $publicPages) && !isAuthenticated()) {
@@ -44,6 +44,8 @@ $routes = [
     'login' => VIEWS_PATH . '/login.php',
     'activate' => VIEWS_PATH . '/activate.php',
     'verify_otp' => VIEWS_PATH . '/verify_otp.php',
+    'forgot_password' => VIEWS_PATH . '/forgot_password.php',
+    'reset_password' => VIEWS_PATH . '/reset_password.php',
     'dashboard' => VIEWS_PATH . '/dashboard.php',
     'projects' => VIEWS_PATH . '/projects.php',
     'project_detail' => VIEWS_PATH . '/project_detail.php',
@@ -82,7 +84,7 @@ if (file_exists($viewFile)) {
         'verify_otp', 'activate', 'create_project', 'login', 'project_detail', 
         'dashboard', 'messages', 'profile', 'settings', 'events', 'tasks', 
         'edit_task', 'project_edit', 'add_member', 'add_task', 'edit_member', 
-        'members', 'projects', 'event_detail', 'event_edit'
+        'members', 'projects', 'event_detail', 'event_edit', 'forgot_password', 'reset_password'
     ];
     
     if (!in_array($page, $pagesWithOwnActions)) {

@@ -50,10 +50,10 @@ require_once __DIR__ . '/../includes/theme.php';
 
                 <!-- Statistiques -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                    <div class="p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300" style="background: linear-gradient(135deg, #9CD1D0 0%, #7BBCBB 100%);">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-blue-100 font-medium">Total Membres</p>
+                                <p class="text-sm text-white opacity-90 font-medium">Total Membres</p>
                                 <p class="text-4xl font-bold text-white mt-2"><?php echo $totalMembers; ?></p>
                             </div>
                             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -61,10 +61,10 @@ require_once __DIR__ . '/../includes/theme.php';
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                    <div class="p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300" style="background: linear-gradient(135deg, #5558B3 0%, #3D409A 100%);">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-green-100 font-medium">Actifs</p>
+                                <p class="text-sm text-white opacity-90 font-medium">Actifs</p>
                                 <p class="text-4xl font-bold text-white mt-2"><?php echo $activeMembers; ?></p>
                             </div>
                             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -72,10 +72,10 @@ require_once __DIR__ . '/../includes/theme.php';
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                    <div class="p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300" style="background: linear-gradient(135deg, #DF886F 0%, #D5745B 100%);">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-purple-100 font-medium">Admins</p>
+                                <p class="text-sm text-white opacity-90 font-medium">Admins</p>
                                 <p class="text-4xl font-bold text-white mt-2"><?php echo $adminCount; ?></p>
                             </div>
                             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -83,10 +83,10 @@ require_once __DIR__ . '/../includes/theme.php';
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                    <div class="p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300" style="background: linear-gradient(135deg, #B8A4D5 0%, #9B86C0 100%);">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-indigo-100 font-medium">Étudiants</p>
+                                <p class="text-sm text-white opacity-90 font-medium">Étudiants</p>
                                 <p class="text-4xl font-bold text-white mt-2"><?php echo $studentCount; ?></p>
                             </div>
                             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -170,7 +170,7 @@ require_once __DIR__ . '/../includes/theme.php';
                                         <tr class="group">
                                             <td class="px-4 py-4">
                                                 <div class="flex items-center">
-                                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold shadow-md text-xs">
+                                                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-md text-xs member-avatar">
                                                         <?php echo strtoupper(substr($member['first_name'], 0, 1) . substr($member['last_name'], 0, 1)); ?>
                                                     </div>
                                                     <div class="ml-3">

@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les éléments DOM après le chargement de la page
     sidebar = document.getElementById('sidebar');
     toggleButton = document.getElementById('toggle-sidebar');
-    mobileMenuButton = document.getElementById('mobile-menu-button');
+    mobileMenuButton = document.getElementById('mobile-menu-button') || document.getElementById('sidebarToggle');
     sidebarOverlay = document.getElementById('sidebar-overlay');
     logoText = document.getElementById('logo-text');
     navTexts = document.querySelectorAll('.nav-text');

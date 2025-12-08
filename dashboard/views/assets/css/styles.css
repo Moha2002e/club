@@ -605,6 +605,15 @@ button:hover {
     background-color: #4b5563 !important;
 }
 
+/* Badges d'assignés en mode sombre */
+.theme-dark .bg-gray-300:not(.task-assignee-avatar) {
+    background-color: #4b5563 !important;
+}
+
+.theme-dark .bg-gray-200:not(.task-assignee-avatar) {
+    background-color: #374151 !important;
+}
+
 /* Sidebar spécifique */
 .theme-dark #sidebar {
     background-color: #1f2937 !important;
@@ -617,6 +626,74 @@ button:hover {
 
 .theme-dark .nav-item:hover {
     background-color: #374151 !important;
+}
+
+/* Bouton de déconnexion avec fond rouge et texte blanc */
+.logout-btn {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+.logout-btn:hover {
+    background-color: #b91c1c !important;
+    color: #ffffff !important;
+}
+
+.theme-dark .logout-btn {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+.theme-dark .logout-btn:hover {
+    background-color: #b91c1c !important;
+    color: #ffffff !important;
+}
+
+/* Avatars membres - fond bleu avec texte blanc */
+.member-avatar {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+.theme-dark .member-avatar {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+/* Avatars assignés dans les tâches - fond bleu avec texte blanc */
+.task-assignee-avatar {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+.theme-light .task-assignee-avatar,
+.theme-dark .task-assignee-avatar,
+body.theme-light .task-assignee-avatar,
+body.theme-dark .task-assignee-avatar {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+.task-assignee-avatar span {
+    color: #ffffff !important;
+}
+
+.theme-light .task-assignee-avatar span,
+.theme-dark .task-assignee-avatar span,
+body.theme-light .task-assignee-avatar span,
+body.theme-dark .task-assignee-avatar span {
+    color: #ffffff !important;
+}
+
+/* Forcer le bleu même avec les classes Tailwind */
+.bg-blue-600.task-assignee-avatar,
+.bg-blue-500.task-assignee-avatar {
+    background-color: #2563eb !important;
+}
+
+.theme-dark .bg-blue-600.task-assignee-avatar,
+.theme-dark .bg-blue-500.task-assignee-avatar {
+    background-color: #2563eb !important;
 }
 
 /* Header spécifique */
@@ -1244,6 +1321,186 @@ button:hover {
 
 .theme-dark .text-red-800 {
     color: #f87171 !important;
+}
+
+/* ============================
+   STYLES RESPONSIVE MOBILE
+   ============================ */
+
+/* Tablettes et mobiles */
+@media (max-width: 768px) {
+    /* Padding et marges réduites */
+    .p-6 {
+        padding: 1rem !important;
+    }
+    
+    .p-8 {
+        padding: 1.5rem !important;
+    }
+    
+    .mb-6, .mb-8 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Tableaux responsives - scroll horizontal */
+    .overflow-auto {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        font-size: 0.875rem;
+    }
+    
+    table th,
+    table td {
+        padding: 0.75rem 0.5rem !important;
+        white-space: nowrap;
+    }
+    
+    /* Grilles en colonne unique sur mobile */
+    .grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Cartes de statistiques */
+    .grid.grid-cols-3,
+    .grid.grid-cols-4 {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Formulaires */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Évite le zoom automatique sur iOS */
+    }
+    
+    /* Boutons pleine largeur sur mobile */
+    .flex.gap-4 button,
+    .flex.gap-2 button {
+        width: 100%;
+    }
+    
+    /* Navigation mobile */
+    header h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    header p {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Modales en plein écran sur mobile */
+    .fixed .relative {
+        margin: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
+        max-width: none !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Badges et labels */
+    .badge,
+    .px-2.py-1 {
+        font-size: 0.75rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+    
+    /* Espacement des icônes */
+    i[data-feather],
+    svg {
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+    }
+    
+    /* Cartes projets */
+    .rounded-xl {
+        border-radius: 0.75rem !important;
+    }
+    
+    /* Filtres */
+    .grid.gap-4 {
+        gap: 0.75rem !important;
+    }
+}
+
+/* Petits mobiles */
+@media (max-width: 480px) {
+    /* Réduction supplémentaire des espacements */
+    .p-4 {
+        padding: 0.75rem !important;
+    }
+    
+    /* Titres encore plus petits */
+    h1 {
+        font-size: 1.25rem !important;
+    }
+    
+    h2 {
+        font-size: 1.125rem !important;
+    }
+    
+    h3 {
+        font-size: 1rem !important;
+    }
+    
+    /* Boutons d'action plus petits */
+    button,
+    .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    /* Flex en colonne */
+    .flex.items-center.justify-between {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+    }
+    
+    /* Tables ultra-compact */
+    table {
+        font-size: 0.75rem !important;
+    }
+    
+    table th,
+    table td {
+        padding: 0.5rem 0.25rem !important;
+    }
+}
+
+/* Mode paysage mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    #sidebar {
+        width: 200px !important;
+    }
+    
+    main {
+        padding: 1rem !important;
+    }
+}
+
+/* Support touch pour mobile */
+@media (hover: none) and (pointer: coarse) {
+    /* Augmenter les zones tactiles */
+    button,
+    a,
+    input,
+    select {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Améliorer le feedback tactile */
+    button:active,
+    a:active {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
 }
 
 .theme-dark .border-green-200 {

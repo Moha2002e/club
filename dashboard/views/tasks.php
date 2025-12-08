@@ -14,8 +14,8 @@ require_once __DIR__ . '/../includes/theme.php';
     <link rel="shortcut icon" type="image/png" href="../images/logo.png">
     <link rel="apple-touch-icon" href="../images/logo.png">
     
-    <link rel="stylesheet" href="views/assets/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="views/assets/css/styles.css">
     <script src="https://unpkg.com/feather-icons"></script>
     <script>
         tailwind.config = {
@@ -267,13 +267,13 @@ require_once __DIR__ . '/../includes/theme.php';
                                                 <div class="flex items-center">
                                                     <div class="flex -space-x-2">
                                                         <?php foreach (array_slice($task['assignees'], 0, 2) as $assignee): ?>
-                                                            <div class="h-7 w-7 rounded-full bg-gray-300 flex items-center justify-center border-2 border-white" title="<?php echo htmlspecialchars($assignee['first_name'] . ' ' . $assignee['last_name']); ?>">
-                                                                <span class="text-xs font-medium text-gray-600"><?php echo strtoupper(substr($assignee['first_name'], 0, 1) . substr($assignee['last_name'], 0, 1)); ?></span>
+                                                            <div class="h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center border-2 border-white task-assignee-avatar" title="<?php echo htmlspecialchars($assignee['first_name'] . ' ' . $assignee['last_name']); ?>">
+                                                                <span class="text-xs font-medium text-white"><?php echo strtoupper(substr($assignee['first_name'], 0, 1) . substr($assignee['last_name'], 0, 1)); ?></span>
                                                             </div>
                                                         <?php endforeach; ?>
                                                         <?php if ($task['assignees_count'] > 2): ?>
-                                                            <div class="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center border-2 border-white">
-                                                                <span class="text-xs font-medium text-gray-600">+<?php echo $task['assignees_count'] - 2; ?></span>
+                                                            <div class="h-7 w-7 rounded-full bg-blue-500 flex items-center justify-center border-2 border-white task-assignee-avatar">
+                                                                <span class="text-xs font-medium text-white">+<?php echo $task['assignees_count'] - 2; ?></span>
                                                             </div>
                                                         <?php endif; ?>
                                                     </div>

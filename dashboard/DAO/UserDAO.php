@@ -524,6 +524,132 @@ class UserDAO {
             return ['success' => false, 'message' => 'Erreur lors de la mise à jour du thème.'];
         }
     }
+
+    /**
+     * Générer un token de réinitialisation de mot de passe
+     */
+    public function generatePasswordResetToken($email) {
+        try {
+            // Vérifier si l'utilisateur existe
+            $sql = "SELECT id, first_name, last_name, email FROM users WHERE email = :email AND is_verified = 1 LIMIT 1";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+            $stmt->execute();
+            $user = $stmt->fetch();
+
+            if (!$user) {
+                // Pour des raisons de sécurité, on ne révèle pas si l'email existe ou non
+                return ['success' => false, 'message' => 'Utilisateur non trouvé.'];
+            }
+
+            // Générer un token unique
+            $token = bin2hex(random_bytes(32));
+            $expiresAt = date('Y-m-d H:i:s', strtotime('+1 hour')); // Token valide 1 heure
+
+            // Enregistrer le token dans la base de données
+            $updateSql = "UPDATE users 
+                          SET activation_token = :token, otp_expires_at = :expires_at 
+                          WHERE id = :user_id";
+            
+            $updateStmt = $this->pdo->prepare($updateSql);
+            $updateStmt->bindValue(':token', $token, PDO::PARAM_STR);
+            $updateStmt->bindValue(':expires_at', $expiresAt, PDO::PARAM_STR);
+            $updateStmt->bindValue(':user_id', $user['id'], PDO::PARAM_INT);
+            $updateStmt->execute();
+
+            return [
+                'success' => true,
+                'token' => $token,
+                'email' => $user['email'],
+                'first_name' => $user['first_name'],
+                'last_name' => $user['last_name'],
+                'message' => 'Token généré avec succès.'
+            ];
+            
+        } catch (PDOException $e) {
+            error_log("Erreur generatePasswordResetToken : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la génération du token.'];
+        }
+    }
+
+    /**
+     * Valider un token de réinitialisation de mot de passe
+     */
+    public function validateResetToken($token) {
+        try {
+            $sql = "SELECT id, first_name, last_name, email, otp_expires_at 
+                    FROM users 
+                    WHERE activation_token = :token AND is_verified = 1 
+                    LIMIT 1";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':token', $token, PDO::PARAM_STR);
+            $stmt->execute();
+            $user = $stmt->fetch();
+
+            if (!$user) {
+                return ['success' => false, 'message' => 'Token invalide.'];
+            }
+
+            // Vérifier si le token n'a pas expiré
+            if ($user['otp_expires_at'] && strtotime($user['otp_expires_at']) < time()) {
+                return ['success' => false, 'message' => 'Le token a expiré.'];
+            }
+
+            return [
+                'success' => true,
+                'user' => [
+                    'id' => $user['id'],
+                    'first_name' => $user['first_name'],
+                    'last_name' => $user['last_name'],
+                    'email' => $user['email']
+                ]
+            ];
+            
+        } catch (PDOException $e) {
+            error_log("Erreur validateResetToken : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la validation du token.'];
+        }
+    }
+
+    /**
+     * Réinitialiser le mot de passe avec un token
+     */
+    public function resetPassword($token, $newPassword) {
+        try {
+            // Valider le token
+            $validation = $this->validateResetToken($token);
+            
+            if (!$validation['success']) {
+                return ['success' => false, 'message' => 'Token invalide ou expiré.'];
+            }
+
+            $userId = $validation['user']['id'];
+
+            // Hasher le nouveau mot de passe
+            $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+
+            // Mettre à jour le mot de passe et supprimer le token
+            $sql = "UPDATE users 
+                    SET password = :password, activation_token = NULL, otp_expires_at = NULL 
+                    WHERE id = :user_id";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':password', $hashedPassword, PDO::PARAM_STR);
+            $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $result = $stmt->execute();
+
+            if ($result) {
+                return ['success' => true, 'message' => 'Mot de passe réinitialisé avec succès.'];
+            } else {
+                return ['success' => false, 'message' => 'Erreur lors de la réinitialisation du mot de passe.'];
+            }
+            
+        } catch (PDOException $e) {
+            error_log("Erreur resetPassword : " . $e->getMessage());
+            return ['success' => false, 'message' => 'Erreur lors de la réinitialisation du mot de passe.'];
+        }
+    }
 }
 ?>
 

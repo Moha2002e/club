@@ -103,36 +103,36 @@ require_once __DIR__ . '/../includes/theme.php';
             <div class="flex-1 overflow-auto p-6">
                 <!-- Cartes de statistiques -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <a href="index.php?page=projects" class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 block hover:shadow-2xl transition-transform transform hover:-translate-y-1">
+                    <a href="index.php?page=projects" class="rounded-xl shadow-lg p-6 block hover:shadow-2xl transition-transform transform hover:-translate-y-1" style="background: linear-gradient(135deg, #9CD1D0 0%, #7BBCBB 100%);">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-green-100">📁 Mes Projets</p>
+                                <p class="text-sm font-medium text-white opacity-90">📁 Mes Projets</p>
                                 <p class="text-4xl font-bold text-white mt-2"><?php echo $stats['projects_count']; ?></p>
-                                <p class="text-sm text-green-100 mt-1">Inscrits</p>
+                                <p class="text-sm text-white opacity-90 mt-1">Inscrits</p>
                             </div>
                             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                                 <i data-feather="folder" class="w-8 h-8 text-white"></i>
                             </div>
                         </div>
                     </a>
-                    <a href="index.php?page=tasks" class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 block hover:shadow-2xl transition-transform transform hover:-translate-y-1">
+                    <a href="index.php?page=tasks" class="rounded-xl shadow-lg p-6 block hover:shadow-2xl transition-transform transform hover:-translate-y-1" style="background: linear-gradient(135deg, #5558B3 0%, #3D409A 100%);">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-blue-100">✓ Mes Tâches</p>
+                                <p class="text-sm font-medium text-white opacity-90">✓ Mes Tâches</p>
                                 <p class="text-4xl font-bold text-white mt-2"><?php echo $stats['tasks_count']; ?></p>
-                                <p class="text-sm text-blue-100 mt-1">À faire</p>
+                                <p class="text-sm text-white opacity-90 mt-1">À faire</p>
                             </div>
                             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                                 <i data-feather="check-square" class="w-8 h-8 text-white"></i>
                             </div>
                         </div>
                     </a>
-                    <a href="index.php?page=events" class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 block hover:shadow-2xl transition-transform transform hover:-translate-y-1">
+                    <a href="index.php?page=events" class="rounded-xl shadow-lg p-6 block hover:shadow-2xl transition-transform transform hover:-translate-y-1" style="background: linear-gradient(135deg, #DF886F 0%, #D5745B 100%);">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-purple-100">📅 Événements</p>
+                                <p class="text-sm font-medium text-white opacity-90">📅 Événements</p>
                                 <p class="text-4xl font-bold text-white mt-2"><?php echo $stats['events_count']; ?></p>
-                                <p class="text-sm text-purple-100 mt-1">À venir</p>
+                                <p class="text-sm text-white opacity-90 mt-1">À venir</p>
                             </div>
                             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                                 <i data-feather="calendar" class="w-8 h-8 text-white"></i>
